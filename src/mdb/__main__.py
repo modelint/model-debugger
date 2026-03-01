@@ -37,8 +37,6 @@ def parse(cl_input):
                         help='Name of the context directory specifying the initialized domain dbs and a *.sip file')
     parser.add_argument('-x', '--scenario', action='store',
                         help='Name of the scenario *.yaml file to run against the populated system')
-    parser.add_argument('-D', '--debug', action='store_true',
-                        help='Debug mode'),
     parser.add_argument('-L', '--log', action='store_true',
                         help='Generate a diagnostic log file')
     parser.add_argument('-v', '--verbose', action='store_true',
@@ -65,15 +63,17 @@ def main():
         # If no log file is requested, remove the log file before termination
         atexit.register(clean_up)
 
-    # Domain specified
-    if args.system:
-        session = Session()  # Create the singleton instance
-        session.initialize(mmdb_path=Path(args.system), context_dir=Path(args.context),
-                           scenario_file=Path(args.scenario), verbose=args.verbose, debug=args.debug)
+    # All pathnames are optional since the user can specify them in the debug session
+    session = Session()  # Create the singleton instance
+    session.run(
+        system_path=Path(args.system) if args.system else None,
+        context_dir=Path(args.context) if args.context else None,
+        scenario_file=Path(args.scenario) if args.scenario else None,
+        verbose=args.verbose)
 
     print("\nNo problemo")  # Comment this line out before release
     logger.info("No problemo")  # We didn't die on an exception, basically
-    if args.verbose or args.debug:
+    if args.verbose:
         print("\nNo problemo")
 
 
