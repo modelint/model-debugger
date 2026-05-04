@@ -4,14 +4,30 @@
 import shlex
 import sys
 from pathlib import Path
-from typing import Optional
 import logging
+import re
+import yaml
+
+# Model Integration
+from mx.system import System
 
 # MDB
-from mdb.system import System
 from mdb.ui_types import *
 
 _logger = logging.getLogger(__name__)
+
+
+def shortcut_index(s: str) -> int | None:
+    """
+    Convert value to an integer shortcut if it is a 1-2 char integer with no leading zeros
+
+    Args:
+        s - user string input
+    Returns:
+        An integer shortcut if detected, otherwise None
+    """
+    return int(s) if re.fullmatch(r'[1-9]\d?', s) else None
+
 
 class Session:
     """
@@ -34,27 +50,27 @@ class Session:
         self.system = None
         self.scenario_file = None
         self.verbose = False
+        self.quit = False
+        self.available_playgrounds: list[str] = []
+        self.playground_scenarios: list[str] = []
+        self.active_scenario = None
 
     def run(self, verbose: bool,
-            system_path: Optional[Path] = None,
-            context_dir: Optional[Path] = None,
-            scenario_file: Optional[Path] = None,
+            system_path: Path = None,
+            context_dir: Path = None,
+            scenario_file: Path = None,
             ):
-        self.system = System(system_path=system_path, context_dir=context_dir)
+        self.system = System()  # Singleton initialization
+        if system_path:
+            self.system.initialize(system_path=system_path, verbose=verbose)
+        else:
+            print("System not yet initialized. Use: set system <path> to initialize.")
         self.scenario_file = scenario_file
         self.verbose = verbose
 
-        print("Model Debugger")
-        # self.system.load_models()
-
-        # if self.context_dir:
-        #     print(f"With context in: {self.context_dir}")
-        # if self.scenario_file:
-        #     print(f"Running scenario: {self.scenario_file}")
-
         print("Type 'help' for available commands, 'quit' or 'exit' to exit\n")
 
-        while True:
+        while not self.quit:
             try:
                 raw = input(CMD_PROMPT).strip()
             except (EOFError, KeyboardInterrupt):
@@ -74,6 +90,7 @@ class Session:
 
             match command.lower():
                 case "quit" | "exit":
+                    self.quit = True
                     break
                 case "help":
                     self.cmd_help(args)
@@ -83,24 +100,8 @@ class Session:
                     self.cmd_list(args)
                 case "set":
                     self.cmd_set(args)
-                    pass
-                case "load":
-                    self.cmd_load(args)
                 case _:
                     print(f"Unknown command: '{command}'. Type 'help' for available commands.")
-
-    def cmd_load(self, args: list[str]) -> None:
-        if len(args) < 1:
-            print("Usage: set <item>")
-            return
-
-        item = args[0]
-        match item:
-            case 'system':
-                self.system.load_models()
-            case _:
-                print(f"Unknown load item: {item}")
-                return
 
     def cmd_show(self, args: list[str]) -> None:
         """
@@ -109,24 +110,27 @@ class Session:
         Args:
             args:
         """
-
         if len(args) < 1:
             print("Usage: set <item>")
             return
 
         item = args[0]
         match item:
+            case 'scenario':
+                print("Not implemented yet.")
             case 'path':
                 self.system.show_path()
-            case 'playgrounds':
-                self.system.show_playgrounds()
+            case 'playground' | 'pg':
+                print(f"Active playground: {self.system.playground}")
+            case 'playgrounds' | 'pgs':
+                self.show_playgrounds()
             case 'active':
                 if args[1] == 'playground':
                     self.system.show_active_playground()
                 else:
                     print(f"Unknown active element: {args[1]}")
             case 'scenarios':
-                pass
+                self.show_scenarios()
             case _:
                 print(f"Unknown item: {item}")
                 return
@@ -142,7 +146,6 @@ class Session:
         print("  list <target>            - List available items (ex: list context)")
         print("  quit / exit              - Exit the debugger")
 
-
     def cmd_set(self, args: list[str]) -> None:
         """
         Set the value of some variable
@@ -155,14 +158,14 @@ class Session:
             return
 
         variable, value = args[0], args[1]
-        vset = True
+        vset = False
         match variable:
             case 'path':
                 self.system.set_path(system_path=Path(value))
-            case 'playground':
-                self.system.set_playground(playground_name=value)
+            case 'playground' | 'pg':
+                self.set_playground(value)
             case 'scenario':
-                self.scenario_file = value
+                self.set_scenario(value)
             case _:
                 vset = False
                 print(f"Setting {variable} not defined")
@@ -176,3 +179,76 @@ class Session:
             return
         target = args[0]
         print(f"  [stub] list {target}")
+
+    def show_playgrounds(self):
+        """Display all playgrounds defined in the system directory"""
+        system_playgrounds = self.system.playgrounds
+        if system_playgrounds is not None:
+            self.available_playgrounds = system_playgrounds
+            print("Available playgrounds:")
+            for n, p in enumerate(self.available_playgrounds):
+                print(f"[{n + 1}] - {p}")
+
+    def set_playground(self, value: str) -> None:
+        """
+        Verify that the supplied value corresponds to a valid playground.
+
+        Args:
+            value: A full string name of a playground directory or shortcut 1-2 integer index
+        """
+        i = shortcut_index(value)  # i is between 1 and 99 or None
+        if i is not None:
+            if not self.available_playgrounds:
+                print(f"Unknown playground: {value}")
+                self.show_playgrounds()
+                return
+            if i > len(self.available_playgrounds):
+                print(f"Undefined playground shortcut: [{value[1:]}]")
+                return
+            pg_name = self.available_playgrounds[i - 1]  # User counts items starting from 1
+        else:
+            pg_name = value
+        if pg_name not in self.available_playgrounds:
+            print(f"Unknown playground: {pg_name}")
+            return
+        print(f"Selected playground: {pg_name}")
+
+        self.system.load_domains(playground=pg_name)
+        # And find all available scenarios for that playground
+        self.show_scenarios()
+
+    def set_scenario(self, value: str):
+        i = shortcut_index(value)  # i is between 1 and 99 or None
+        if i is not None:
+            if not self.playground_scenarios:
+                print(f"Unknown scenario: {value}")
+                self.show_scenarios()
+                return
+            if i > len(self.playground_scenarios):
+                print(f"Undefined scenario shortcut: [{value[1:]}]")
+                return
+            scenario_name = self.playground_scenarios[i - 1]  # User counts items starting from 1
+        else:
+            scenario_name = value
+        if scenario_name not in self.playground_scenarios:
+            print(f"Unknown scenario: {scenario_name}")
+            return
+        print(f"Selected scenario: {scenario_name}")
+
+        sfile = self.system.playground / 'scenarios' / (scenario_name + ".yaml")
+        with open(sfile, "r") as file:
+            self.active_scenario = yaml.safe_load(file)  # Load YAML content safely
+        pass
+
+    def show_scenarios(self) -> None:
+        """
+        Display all scenarios defined in the active playground directory
+        with convenient integer shortcuts
+        """
+        scenario_path = self.system.playground / 'scenarios'
+        scenario_paths = list(scenario_path.glob("*.yaml"))
+        self.playground_scenarios = [f.stem for f in scenario_paths]
+        if self.playground_scenarios:
+            print("Active playground scenarios:")
+            for n, p in enumerate(self.playground_scenarios):
+                print(f"[{n + 1}] - {p}")

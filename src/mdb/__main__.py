@@ -49,7 +49,8 @@ def parse(cl_input):
 def main():
     # Start logging
     logger = get_logger()
-    logger.info(f'{_progname} version: {version}')
+    msg = f'{_progname} version: {version}'
+    logger.info(msg)
 
     # Parse the command line args
     args = parse(sys.argv[1:])
@@ -63,6 +64,10 @@ def main():
         # If no log file is requested, remove the log file before termination
         atexit.register(clean_up)
 
+    if args.verbose:
+        print(f"\n{msg}")
+        print("\nVerbose mode set\n")
+
     # All pathnames are optional since the user can specify them in the debug session
     session = Session()  # Create the singleton instance
     session.run(
@@ -71,7 +76,6 @@ def main():
         scenario_file=Path(args.scenario) if args.scenario else None,
         verbose=args.verbose)
 
-    print("\nNo problemo")  # Comment this line out before release
     logger.info("No problemo")  # We didn't die on an exception, basically
     if args.verbose:
         print("\nNo problemo")
