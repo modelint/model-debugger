@@ -33,7 +33,7 @@ def parse(cl_input):
     parser = argparse.ArgumentParser(description=_progname)
     parser.add_argument('-s', '--system', action='store',
                         help='Name of the metamodel TclRAL database *.ral file populated with one or more domains')
-    parser.add_argument('-c', '--context', action='store',
+    parser.add_argument('-p', '--playground', action='store',
                         help='Name of the context directory specifying the initialized domain dbs and a *.sip file')
     parser.add_argument('-x', '--scenario', action='store',
                         help='Name of the scenario *.yaml file to run against the populated system')
@@ -49,7 +49,7 @@ def parse(cl_input):
 def main():
     # Start logging
     logger = get_logger()
-    msg = f'{_progname} version: {version}'
+    msg = f'{_progname} version: {version}\n'
     logger.info(msg)
 
     # Parse the command line args
@@ -64,16 +64,16 @@ def main():
         # If no log file is requested, remove the log file before termination
         atexit.register(clean_up)
 
+    print(f"\n{msg}")
     if args.verbose:
-        print(f"\n{msg}")
         print("\nVerbose mode set\n")
 
     # All pathnames are optional since the user can specify them in the debug session
     session = Session()  # Create the singleton instance
-    session.run(
+    session.initialize(
         system_path=Path(args.system) if args.system else None,
-        context_dir=Path(args.context) if args.context else None,
-        scenario_file=Path(args.scenario) if args.scenario else None,
+        playground_name=args.playground if args.playground else None,
+        scenario_name=args.scenario if args.scenario else None,
         verbose=args.verbose)
 
     logger.info("No problemo")  # We didn't die on an exception, basically

@@ -13,6 +13,7 @@ from mx.system import System
 
 # MDB
 from mdb.ui_types import *
+from mdb.mdb_types import *
 
 _logger = logging.getLogger(__name__)
 
@@ -31,8 +32,16 @@ def shortcut_index(s: str) -> int | None:
 
 class Session:
     """
-    This class represents the debugger session.
-    It follows the singleton pattern to ensure only one exists.
+    This class represents the debugger session. It follows the singleton pattern to ensure only one exists.
+
+    Attributes:
+        system: MX system object we are debugging
+        playground_name: Name of the active playground (same as file name in system playgrounds dir)
+        scenario_name: Name of the active scenario (same as file name minus any extension in the
+            playground scenarios dir)
+        playground_scenarios: All scenario files defined for the active playground minus any file extension
+        active_scenario: Name of the scenario we are currently running
+        verbose: Whether verbose output is enabled
     """
     _instance = None
 
@@ -42,35 +51,64 @@ class Session:
         return cls._instance
 
     def __init__(self):
-        # Avoid reinitialization if already initialized
+        # Avoid singleton reinitialization if already initialized
         if getattr(self, "_initialized", False):
             return
         self._initialized = True
 
         self.system = None
-        self.scenario_file = None
-        self.verbose = False
-        self.quit = False
-        self.available_playgrounds: list[str] = []
+        self.playground_name = None
+        self.scenario_name = None
         self.playground_scenarios: list[str] = []
         self.active_scenario = None
+        self.verbose = False
 
-    def run(self, verbose: bool,
-            system_path: Path = None,
-            context_dir: Path = None,
-            scenario_file: Path = None,
-            ):
-        self.system = System()  # Singleton initialization
+    def initialize(self, verbose: bool,
+                   system_path: Path = None,
+                   playground_name: str = None,
+                   scenario_name: str = None,
+                   ):
+        """
+        We can initialize a session without any system and then let the user initialize it interactively
+        or, if a system path is provided, we can initialize it right away. The same goes for the playground and
+        scenario names.
+
+        After whatever degree of initialization is completed, we start the user command input loop
+
+        Args:
+            verbose:  Verbose mode for stdout (console) messaging/status
+            system_path:  An absolute path to the system directory where the entire system is defined
+            playground_name: Name of a playground corresponding ot the name of a file in the system's playground dir
+            scenario_name: Name of a scenario file (yaml, for now) that the mdb loads locally, but is found in the
+                system's scenarios directory
+        """
+        print("Initializing session from command line arguments...")
+        if system_path:
+            self.system = System()  # Singleton initialization
         if system_path:
             self.system.initialize(system_path=system_path, verbose=verbose)
         else:
             print("System not yet initialized. Use: set system <path> to initialize.")
-        self.scenario_file = scenario_file
+        self.scenario_name = scenario_name
+        self.playground_name = playground_name
         self.verbose = verbose
 
-        print("Type 'help' for available commands, 'quit' or 'exit' to exit\n")
+        # Initialize these if they were supplied on the command line
+        if playground_name:
+            self.set_playground(playground_name)
+            if scenario_name:
+                self.set_scenario(scenario_name)
 
-        while not self.quit:
+        self.run()
+
+    def run(self):
+        """
+        This is the user input command loop.  It just runs until the user exits.
+        """
+
+        print("\nType 'help' for available commands, 'quit' or 'exit' to exit\n")
+
+        while True:  # Breaks out when the user enters the quit/exit command
             try:
                 raw = input(CMD_PROMPT).strip()
             except (EOFError, KeyboardInterrupt):
@@ -90,7 +128,6 @@ class Session:
 
             match command.lower():
                 case "quit" | "exit":
-                    self.quit = True
                     break
                 case "help":
                     self.cmd_help(args)
@@ -100,6 +137,8 @@ class Session:
                     self.cmd_list(args)
                 case "set":
                     self.cmd_set(args)
+                case "execute" | "x" | "exec":
+                    self.execute_scenario()
                 case _:
                     print(f"Unknown command: '{command}'. Type 'help' for available commands.")
 
@@ -108,7 +147,7 @@ class Session:
         Display requested item on console
 
         Args:
-            args:
+            args:  What to display
         """
         if len(args) < 1:
             print("Usage: set <item>")
@@ -142,8 +181,7 @@ class Session:
         print("Commands:")
         print("  show <item>              - Display item on console (ex: show path)")
         print("  set <variable> <value>   - Set a variable (ex: set path ~/my/path)")
-        print("  load <target> [name]     - Load a target (ex: load system, load context name)")
-        print("  list <target>            - List available items (ex: list context)")
+        print("  execute / exec / x       - Execute the active scenario")
         print("  quit / exit              - Exit the debugger")
 
     def cmd_set(self, args: list[str]) -> None:
@@ -184,10 +222,9 @@ class Session:
         """Display all playgrounds defined in the system directory"""
         system_playgrounds = self.system.playgrounds
         if system_playgrounds is not None:
-            self.available_playgrounds = system_playgrounds
             print("Available playgrounds:")
-            for n, p in enumerate(self.available_playgrounds):
-                print(f"[{n + 1}] - {p}")
+            for n, p in enumerate(self.system.available_playgrounds):
+                print(f"  [{n + 1}] - {p}")
 
     def set_playground(self, value: str) -> None:
         """
@@ -198,17 +235,13 @@ class Session:
         """
         i = shortcut_index(value)  # i is between 1 and 99 or None
         if i is not None:
-            if not self.available_playgrounds:
-                print(f"Unknown playground: {value}")
-                self.show_playgrounds()
-                return
-            if i > len(self.available_playgrounds):
+            if i > len(self.system.available_playgrounds):
                 print(f"Undefined playground shortcut: [{value[1:]}]")
                 return
-            pg_name = self.available_playgrounds[i - 1]  # User counts items starting from 1
+            pg_name = self.system.playgrounds[i - 1]  # User counts items starting from 1
         else:
             pg_name = value
-        if pg_name not in self.available_playgrounds:
+        if pg_name not in self.system.playgrounds:
             print(f"Unknown playground: {pg_name}")
             return
         print(f"Selected playground: {pg_name}")
@@ -238,7 +271,6 @@ class Session:
         sfile = self.system.playground / 'scenarios' / (scenario_name + ".yaml")
         with open(sfile, "r") as file:
             self.active_scenario = yaml.safe_load(file)  # Load YAML content safely
-        pass
 
     def show_scenarios(self) -> None:
         """
@@ -251,4 +283,13 @@ class Session:
         if self.playground_scenarios:
             print("Active playground scenarios:")
             for n, p in enumerate(self.playground_scenarios):
-                print(f"[{n + 1}] - {p}")
+                print(f"  [{n + 1}] - {p}")
+
+    def execute_scenario(self) -> None:
+        """
+        Process each interaction of the scenario until it is complete
+        """
+        print(f"Running scenario: {self.active_scenario}...\n")
+        System.set_announce_triggers(['external event'])
+        for i in self.active_scenario['Interactions']:
+            print(f"{i['description']}")
