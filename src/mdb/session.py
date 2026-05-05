@@ -15,6 +15,8 @@ from mx.system import System
 from mdb.ui_types import *
 from mdb.mdb_types import *
 
+STEP_PROMPT = '>: '
+
 _logger = logging.getLogger(__name__)
 
 
@@ -285,11 +287,64 @@ class Session:
             for n, p in enumerate(self.playground_scenarios):
                 print(f"  [{n + 1}] - {p}")
 
+    @staticmethod
+    def format_interaction(i: Interaction):
+        pass
+        if i.action == ActionType.SIGNAL_INSTANCE:
+            inst_str = '<' + '-'.join([str(v) for v in i.target.instance_id.values()]) + '>'
+            formatted_i = f"{i.source.domain} >|| {i.target.domain} : {i.name} -> {i.target.class_name} {inst_str}"
+        else:
+            formatted_i = "Unimplemented Acton Type"
+        print(formatted_i)
+
     def execute_scenario(self) -> None:
         """
         Process each interaction of the scenario until it is complete
         """
-        print(f"Running scenario: {self.active_scenario}...\n")
+        print(f"Running scenario: {self.scenario_name}...\n")
+        # Set external events to trigger an announcement and return control after enclosing activity completes
         System.set_announce_triggers(['external event'])
-        for i in self.active_scenario['Interactions']:
+
+        # We will step through each interaction and pause
+        for n, i in enumerate(self.active_scenario['Interactions']):
+            print(f"\n--- Interaction [{n + 1}/{len(self.active_scenario['Interactions'])}] ---")
             print(f"{i['description']}")
+            i_send = Interaction(
+                direction=Direction[i['direction']],
+                action=i['action'],
+                name=i['name'],
+                source=i['source'],
+                target=i['target'],
+                parameters=i.get('parameters', None)
+            )
+            Session.format_interaction(i_send)
+            self.system.inject(stimulus=i_send)
+
+            # --- MX call goes here ---
+            # result = self.system.run_interaction(i)
+            # -------------------------
+
+            # Inner pause loop: let user inspect results before stepping forward
+            while True:
+                try:
+                    raw = input(STEP_PROMPT).strip().lower()
+                except (EOFError, KeyboardInterrupt):
+                    print("\nScenario aborted.")
+                    return
+
+                match raw:
+                    case "" | "n" | "next" | "s" | "step":
+                        break  # Advance to next interaction
+                    case "q" | "quit" | "abort":
+                        print("Scenario aborted.")
+                        return
+                    # case "r" | "repeat":
+                    #     print(f"{i['description']}")  # Re-display current interaction
+                    case "h" | "help" | "?":
+                        print("  [enter] / n / next / s / step  - Advance to next interaction")
+                        # print("  r / repeat                     - Re-display current interaction")
+                        print("  q / quit / abort               - Abort scenario")
+                    case _:
+                        print(f"Unknown step command: '{raw}'. Type 'h' for help.")
+
+        print("\nScenario complete.")

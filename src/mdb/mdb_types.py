@@ -8,12 +8,12 @@ from enum import Enum
 Interaction = namedtuple('mdb_Interaction', 'direction action name source target parameters')
 
 class ActionType(Enum):
-    SIGNAL_INSTANCE = "SIGNAL_INSTANCE"
-    EXTERNAL_EVENT = "EXTERNAL_EVENT"
+    SIGNAL_INSTANCE = "signal instance"
+    EXTERNAL_EVENT = "external event"
 
 class Direction(Enum):
-    STIMULUS = "STIMULUS"
-    RESPONSE = "RESPONSE"
+    STIMULUS = "stimulus"
+    RESPONSE = "response"
 
 class SuspendStatus(Enum):
     """
