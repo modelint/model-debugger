@@ -45,6 +45,8 @@ class Session:
         playground_scenarios: All scenario files defined for the active playground minus any file extension
         active_scenario: Name of the scenario we are currently running
         verbose: Whether verbose output is enabled
+        stepping: Whether stepping mode is enabled (pauses between interactions)
+        descriptions: Whether interaction descriptions are printed during scenario execution
     """
     _instance = None
 
@@ -153,6 +155,12 @@ class Session:
         else:
             print("Run to completion mode set")
 
+    def show_descriptions_status(self):
+        if self.descriptions:
+            print("Descriptions mode set")
+        else:
+            print("Descriptions mode not set")
+
     def cmd_show(self, args: list[str]) -> None:
         """
         Display requested item on console
@@ -183,6 +191,8 @@ class Session:
                 self.show_scenarios()
             case 'step':
                 self.show_stepping_status()
+            case 'descriptions' | 'desc':
+                self.show_descriptions_status()
             case _:
                 print(f"Unknown item: {item}")
                 return
@@ -194,6 +204,8 @@ class Session:
         print("Commands:")
         print("  show <item>              - Display item on console (ex: show path)")
         print("  set <variable> <value>   - Set a variable (ex: set path ~/my/path)")
+        print("  set step                 - Toggle stepping mode (pause between interactions)")
+        print("  set desc                 - Toggle descriptions mode (print interaction descriptions)")
         print("  execute / exec / x       - Execute the active scenario")
         print("  quit / exit              - Exit the debugger")
 
@@ -219,8 +231,12 @@ class Session:
                 self.set_scenario(value)
             case 'step':
                 # Toggle the setting
-                self.stepping = False if self.stepping else True
+                self.stepping = not self.stepping
                 self.show_stepping_status()
+            case 'descriptions' | 'desc':
+                # Toggle the setting
+                self.descriptions = not self.descriptions
+                self.show_descriptions_status()
             case _:
                 vset = False
                 print(f"Setting {variable} not defined")
@@ -345,7 +361,7 @@ class Session:
 
                 # TODO: Think about how to correlate announcements and responses
                 # The triggered announcments should correspond to the expedted response interactions
-                # but at this point, we doin't attempt to match them up.  This may be more in the realm of a testing
+                # but at this point, we doin't attempt to match them up.  This may be in the realm of a testing
                 # package, but we keep them in the scenario yaml for now.
             else:  # Response
                 self.system.go()  # No stimulus to inject, so just pass control back to MX
@@ -368,7 +384,7 @@ class Session:
                         i = next(interactions, None)  # Advance to the next interaction
                         break
                     case "r" | "run":
-                        self.stepping = False  # Run to completio
+                        self.stepping = False  # Run to completion
                         i = next(interactions, None)
                         break
                     case "q" | "quit" | "abort":
