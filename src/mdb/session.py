@@ -10,10 +10,11 @@ import yaml
 
 # Model Integration
 from mx.system import System
+from mx.mxtypes import *
 
 # MDB
 from mdb.ui_types import *
-from mdb.mdb_types import *
+from mdb.scenario import Scenario
 
 STEP_PROMPT = '>: '
 
@@ -64,6 +65,8 @@ class Session:
         self.playground_scenarios: list[str] = []
         self.active_scenario = None
         self.verbose = False
+        self.stepping = False  # By default we assume that the user wants to run the scenario without stepping
+        self.descriptions = False
 
     def initialize(self, verbose: bool,
                    system_path: Path = None,
@@ -144,6 +147,12 @@ class Session:
                 case _:
                     print(f"Unknown command: '{command}'. Type 'help' for available commands.")
 
+    def show_stepping_status(self):
+        if self.stepping:
+            print("Stepping mode set")
+        else:
+            print("Run to completion mode set")
+
     def cmd_show(self, args: list[str]) -> None:
         """
         Display requested item on console
@@ -172,6 +181,8 @@ class Session:
                     print(f"Unknown active element: {args[1]}")
             case 'scenarios':
                 self.show_scenarios()
+            case 'step':
+                self.show_stepping_status()
             case _:
                 print(f"Unknown item: {item}")
                 return
@@ -193,11 +204,11 @@ class Session:
         Args:
             args:
         """
-        if len(args) < 2:
-            print("Usage: set <variable> <value>")
+        if len(args) > 2:
+            print("Usage: set <variable> [<value>]")
             return
 
-        variable, value = args[0], args[1]
+        variable, value = args[0], args[1] if len(args) > 1 else None
         vset = False
         match variable:
             case 'path':
@@ -206,6 +217,10 @@ class Session:
                 self.set_playground(value)
             case 'scenario':
                 self.set_scenario(value)
+            case 'step':
+                # Toggle the setting
+                self.stepping = False if self.stepping else True
+                self.show_stepping_status()
             case _:
                 vset = False
                 print(f"Setting {variable} not defined")
@@ -271,8 +286,7 @@ class Session:
         print(f"Selected scenario: {scenario_name}")
 
         sfile = self.system.playground / 'scenarios' / (scenario_name + ".yaml")
-        with open(sfile, "r") as file:
-            self.active_scenario = yaml.safe_load(file)  # Load YAML content safely
+        self.active_scenario = Scenario(sfile)
 
     def show_scenarios(self) -> None:
         """
@@ -289,7 +303,6 @@ class Session:
 
     @staticmethod
     def format_interaction(i: Interaction):
-        pass
         if i.action == ActionType.SIGNAL_INSTANCE:
             inst_str = '<' + '-'.join([str(v) for v in i.target.instance_id.values()]) + '>'
             formatted_i = f"{i.source.domain} >|| {i.target.domain} : {i.name} -> {i.target.class_name} {inst_str}"
@@ -297,32 +310,50 @@ class Session:
             formatted_i = "Unimplemented Acton Type"
         print(formatted_i)
 
+    @staticmethod
+    def format_announcements(announcement_tuples: list[Announcement]):
+        for a in announcement_tuples:
+            if isinstance(a, ExternalEvent_Announcement):
+                if a.inst:
+                    inst_str = '<' + '-'.join([str(v) for v in a.inst.values()]) + '>'
+                else:
+                    inst_str = ""
+                pstrings = [f"{n}={v[0]}" for n,v in a.params.items()]
+                param_str = ', '.join(pstrings)
+                formatted_a = f"{a.domain} >|| {a.ee} : {a.source}{inst_str} {a.event}( {param_str} )"
+                print(f"    {formatted_a}")
+
     def execute_scenario(self) -> None:
         """
         Process each interaction of the scenario until it is complete
         """
         print(f"Running scenario: {self.scenario_name}...\n")
         # Set external events to trigger an announcement and return control after enclosing activity completes
-        System.set_announce_triggers(['external event'])
+        System.set_announce_triggers(['external signal'])
 
-        # We will step through each interaction and pause
-        for n, i in enumerate(self.active_scenario['Interactions']):
-            print(f"\n--- Interaction [{n + 1}/{len(self.active_scenario['Interactions'])}] ---")
-            print(f"{i['description']}")
-            i_send = Interaction(
-                direction=Direction[i['direction']],
-                action=i['action'],
-                name=i['name'],
-                source=i['source'],
-                target=i['target'],
-                parameters=i.get('parameters', None)
-            )
-            Session.format_interaction(i_send)
-            self.system.inject(stimulus=i_send)
+        interactions = iter(self.active_scenario.interactions)
+        i = next(interactions, None)
 
-            # --- MX call goes here ---
-            # result = self.system.run_interaction(i)
-            # -------------------------
+        while i is not None:
+            if self.descriptions:
+                print(f"    ** {i.description} ** ")
+            # Process the current interaction
+            if i.direction == Direction.STIMULUS:
+                Session.format_interaction(i)  # Print out the stimulus injection info
+                self.system.inject(stimulus=i)  # Inject the stimulus, transferring control to MX
+                self.format_announcements(self.system.announcements)  # Print out any triggered announcments
+
+                # TODO: Think about how to correlate announcements and responses
+                # The triggered announcments should correspond to the expedted response interactions
+                # but at this point, we doin't attempt to match them up.  This may be more in the realm of a testing
+                # package, but we keep them in the scenario yaml for now.
+            else:  # Response
+                self.system.go()  # No stimulus to inject, so just pass control back to MX
+                self.format_announcements(self.system.announcements)  # Print out any triggered announcments
+
+            if not self.stepping:
+                i = next(interactions, None)
+                continue
 
             # Inner pause loop: let user inspect results before stepping forward
             while True:
@@ -334,15 +365,17 @@ class Session:
 
                 match raw:
                     case "" | "n" | "next" | "s" | "step":
-                        break  # Advance to next interaction
+                        i = next(interactions, None)  # Advance to the next interaction
+                        break
+                    case "r" | "run":
+                        self.stepping = False  # Run to completio
+                        i = next(interactions, None)
+                        break
                     case "q" | "quit" | "abort":
                         print("Scenario aborted.")
                         return
-                    # case "r" | "repeat":
-                    #     print(f"{i['description']}")  # Re-display current interaction
                     case "h" | "help" | "?":
                         print("  [enter] / n / next / s / step  - Advance to next interaction")
-                        # print("  r / repeat                     - Re-display current interaction")
                         print("  q / quit / abort               - Abort scenario")
                     case _:
                         print(f"Unknown step command: '{raw}'. Type 'h' for help.")
