@@ -161,6 +161,24 @@ class Session:
         else:
             print("Descriptions mode not set")
 
+    def show_states(self) -> None:
+        if not self.system:
+            print("No system loaded.")
+            return
+        for domain_name, domain in self.system.domains.items():
+            current_states = domain.get_current_states()
+            if not current_states:
+                continue
+            print(f"\n{domain_name} current states:")
+            print("—")
+            for sm in current_states:
+                if sm.instance:
+                    inst_str = '<' + '-'.join(f"{k}:{v}" for k, v in sm.instance.items()) + '>'
+                else:
+                    inst_str = ""
+                print(f"{sm.state_model} {inst_str} [{sm.state}]")
+            print("—")
+
     def cmd_show(self, args: list[str]) -> None:
         """
         Display requested item on console
@@ -193,6 +211,8 @@ class Session:
                 self.show_stepping_status()
             case 'descriptions' | 'desc':
                 self.show_descriptions_status()
+            case 'states':
+                self.show_states()
             case _:
                 print(f"Unknown item: {item}")
                 return
@@ -203,6 +223,7 @@ class Session:
     def cmd_help(self, args: list[str]) -> None:
         print("Commands:")
         print("  show <item>              - Display item on console (ex: show path)")
+        print("  show states              - Display current state of all state models")
         print("  set <variable> <value>   - Set a variable (ex: set path ~/my/path)")
         print("  set step                 - Toggle stepping mode (pause between interactions)")
         print("  set desc                 - Toggle descriptions mode (print interaction descriptions)")
@@ -390,8 +411,11 @@ class Session:
                     case "q" | "quit" | "abort":
                         print("Scenario aborted.")
                         return
+                    case "show states":
+                        self.show_states()
                     case "h" | "help" | "?":
                         print("  [enter] / n / next / s / step  - Advance to next interaction")
+                        print("  show states                    - Display current state of all state models")
                         print("  q / quit / abort               - Abort scenario")
                     case _:
                         print(f"Unknown step command: '{raw}'. Type 'h' for help.")
