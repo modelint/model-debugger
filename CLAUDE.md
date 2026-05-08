@@ -86,11 +86,13 @@ Interactions:
 ## Interactive commands
 
 ```
-show path | playground | playgrounds | scenarios | step | descriptions
+show path | playground | playgrounds | scenarios | step | descriptions | states
 set path <abs_path> | playground <name_or_#> | scenario <name_or_#> | step | descriptions
 execute / exec / x    # run the active scenario
 help / quit / exit
 ```
+
+`show states` iterates all loaded domains, calls `domain.get_current_states()` (returns `list[SM_State]`), and prints each entry as `state_model <Key:Val-Key:Val> [state]`, grouped under a domain header. Domains with no active state machines are skipped. Available at both the outer `#` prompt and the inner `>:` stepping prompt.
 
 Playgrounds and scenarios can be selected by the integer shortcut printed in their listing (1–99).
 
