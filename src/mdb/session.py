@@ -161,6 +161,50 @@ class Session:
         else:
             print("Descriptions mode not set")
 
+    def show_events(self) -> None:
+        """Display all pending events across all domains and state machines."""
+        if not self.system:
+            print("No system loaded.")
+            return
+        any_found = False
+        for domain_name, domain in self.system.domains.items():
+            pending = domain.get_pending_events()  # dict[str, list[SM_Pending]]
+            domain_header_printed = False
+            for sm_name, sm_list in pending.items():
+                for sm_pending in sm_list:
+                    if not sm_pending.interaction and not sm_pending.completion:
+                        continue
+                    if not domain_header_printed:
+                        print(f"\n{domain_name} pending events:")
+                        domain_header_printed = True
+                        any_found = True
+                    # Format instance id
+                    if sm_pending.instance:
+                        inst_str = '<' + '-'.join(f"{k}:{v}" for k, v in sm_pending.instance.items()) + '>'
+                    else:
+                        inst_str = ""
+                    print(f"{sm_name} {inst_str}")
+                    # Interaction events — all on one line
+                    if sm_pending.interaction:
+                        parts = []
+                        for e in sm_pending.interaction:
+                            if e.params:
+                                param_str = ', '.join(f"{n}: {v[0]}" for n, v in e.params.items())
+                            else:
+                                param_str = ""
+                            parts.append(f"{e.event_name}({param_str})")
+                        print(f"  I - {', '.join(parts)}")
+                    # Completion event
+                    if sm_pending.completion:
+                        c = sm_pending.completion
+                        if c.params:
+                            param_str = ', '.join(f"{n}: {v[0]}" for n, v in c.params.items())
+                        else:
+                            param_str = ""
+                        print(f"  C - {c.event_name}({param_str})")
+        if not any_found:
+            print("No pending events.")
+
     def show_states(self) -> None:
         if not self.system:
             print("No system loaded.")
@@ -413,9 +457,12 @@ class Session:
                         return
                     case "show states":
                         self.show_states()
+                    case "show events":
+                        self.show_events()
                     case "h" | "help" | "?":
                         print("  [enter] / n / next / s / step  - Advance to next interaction")
                         print("  show states                    - Display current state of all state models")
+                        print("  show events                    - Display all pending events")
                         print("  q / quit / abort               - Abort scenario")
                     case _:
                         print(f"Unknown step command: '{raw}'. Type 'h' for help.")
