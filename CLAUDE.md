@@ -86,13 +86,21 @@ Interactions:
 ## Interactive commands
 
 ```
-show path | playground | playgrounds | scenarios | step | descriptions | states
+show path | playground | playgrounds | scenarios | step | descriptions | states | events
 set path <abs_path> | playground <name_or_#> | scenario <name_or_#> | step | descriptions
 execute / exec / x    # run the active scenario
 help / quit / exit
 ```
 
 `show states` iterates all loaded domains, calls `domain.get_current_states()` (returns `list[SM_State]`), and prints each entry as `state_model <Key:Val-Key:Val> [state]`, grouped under a domain header. Domains with no active state machines are skipped. Available at both the outer `#` prompt and the inner `>:` stepping prompt.
+
+`show events` iterates all loaded domains, calls `domain.get_pending_events()` (returns `dict[str, list[SM_Pending]]`), and prints each SM instance that has at least one pending event. Format per instance:
+```
+SM_Name <Key:Val-Key:Val>
+  I - event1(param: val), event2()
+  C - completion_event(param: val)
+```
+`I` = interaction event(s), `C` = completion event; omitted if not pending. Parameters formatted as `name: value`, comma-separated. Available only at the inner `>:` stepping prompt.
 
 Playgrounds and scenarios can be selected by the integer shortcut printed in their listing (1–99).
 
