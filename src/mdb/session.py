@@ -156,6 +156,7 @@ class Session:
             print("Run to completion mode set")
 
     def show_descriptions_status(self):
+        # Layout Pass Design Sketch (#3)
         if self.descriptions:
             print("Descriptions mode set")
         else:
