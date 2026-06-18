@@ -120,3 +120,9 @@ Please look in the example elevator yaml file for more detailed documentation.
 
 `stimulus` interactions inject an event into the system; `response` interactions
 pass control back to the model engine and collect any announcements it emits.
+
+## Development
+
+For a code walkthrough of how MDB works internally — module map, control flow,
+and the boundary to the MX engine — see
+[documentation/internals.md](documentation/internals.md).
