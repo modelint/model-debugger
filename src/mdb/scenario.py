@@ -19,17 +19,17 @@ class Scenario:
             sdata = yaml.safe_load(file)  # Load YAML content safely
 
         # Unpack the Actors
-        actors = {}
+        self.actors = {}
         internal_actor_parse = sdata['Actors']['internal']
         for domain, instances in internal_actor_parse.items():
             for name, address in instances.items():
                 instance_id = {attr: value for attr, value in address['instance'].items()}
-                actors[f"{domain}:{name}"] = InstanceAddress(domain=domain, class_name=address['class'],
+                self.actors[f"{domain}:{name}"] = InstanceAddress(domain=domain, class_name=address['class'],
                                                              instance_id=instance_id)
 
         external_actor_parse = sdata['Actors']['external']
         for ea in external_actor_parse:
-            actors[ea] = ExternalAddress(domain=ea)
+            self.actors[ea] = ExternalAddress(domain=ea)
         pass
 
         # Unpack the interactions
@@ -40,8 +40,8 @@ class Scenario:
                 direction=Direction(i['direction']),
                 action=ActionType(i['action']),
                 name=i['name'],
-                source=actors[i['source']],
-                target=actors[i['target']],
+                source=self.actors[i['source']],
+                target=self.actors[i['target']],
                 parameters=i.get('parameters', {})
             )
             self.interactions.append(ituple)
