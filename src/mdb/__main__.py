@@ -35,6 +35,12 @@ def parse(cl_input):
                         help='Name of the metamodel TclRAL database *.ral file populated with one or more domains')
     parser.add_argument('-p', '--playground', action='store',
                         help='Name of the context directory specifying the initialized domain dbs and a *.sip file')
+    parser.add_argument('-o', '--output', action='store',
+                        help='Name of the output sequence diagram file with either svg or pdf extension')
+    parser.add_argument('-i', '--interactive', action='store_true',
+                        help='Sequence diagram created interactively if set')
+    parser.add_argument('-sd', '--sd_theme', action='store',
+                        help='Name of the custom theme to apply when drawing the sequence diagram')
     parser.add_argument('-x', '--scenario', action='store',
                         help='Name of the scenario *.yaml file to run against the populated system')
     parser.add_argument('-L', '--log', action='store_true',
@@ -72,8 +78,11 @@ def main():
     session = Session()  # Create the singleton instance
     session.initialize(
         system_path=Path(args.system) if args.system else None,
-        playground_name=args.playground if args.playground else None,
-        scenario_name=args.scenario if args.scenario else None,
+        playground_name=args.playground,
+        sd_path=Path(args.output) if args.output else None,
+        sd_theme=args.sd_theme,
+        interactive=args.interactive,
+        scenario_name=args.scenario,
         verbose=args.verbose)
 
     logger.info("No problemo")  # We didn't die on an exception, basically

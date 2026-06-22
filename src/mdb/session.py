@@ -63,6 +63,10 @@ class Session:
 
         self.system = None
         self.playground_name = None
+        self.output_path = None
+        self.sd = None
+        self.sd_theme = None
+        self.interactive = False
         self.scenario_name = None
         self.playground_scenarios: list[str] = []
         self.active_scenario = None
@@ -71,9 +75,12 @@ class Session:
         self.descriptions = False
 
     def initialize(self, verbose: bool,
-                   system_path: Path = None,
-                   playground_name: str = None,
-                   scenario_name: str = None,
+                   interactive: bool,
+                   system_path: Path | None = None,
+                   sd_path: Path | None = None,
+                   sd_theme: str | None = None,
+                   playground_name: str | None = None,
+                   scenario_name: str | None = None,
                    ):
         """
         We can initialize a session without any system and then let the user initialize it interactively
@@ -85,6 +92,9 @@ class Session:
         Args:
             verbose:  Verbose mode for stdout (console) messaging/status
             system_path:  An absolute path to the system directory where the entire system is defined
+            sd_path:  Path to a sequence diagram file to be generated using Sequins
+            sd_theme: The sequence diagram theme to use
+            interactive: Sequence diagram drawn interactively if true, otherwise rendered when scenario completes
             playground_name: Name of a playground corresponding ot the name of a file in the system's playground dir
             scenario_name: Name of a scenario file (yaml, for now) that the mdb loads locally, but is found in the
                 system's scenarios directory
@@ -92,12 +102,14 @@ class Session:
         print("Initializing session from command line arguments...")
         if system_path:
             self.system = System()  # Singleton initialization
-        if system_path:
             self.system.initialize(system_path=system_path, verbose=verbose)
         else:
             print("System not yet initialized. Use: set system <path> to initialize.")
         self.scenario_name = scenario_name
         self.playground_name = playground_name
+        self.output_path = sd_path
+        self.sd_theme = 'default' or sd_theme  # no theme specified, so use 'default'
+        self.interactive = interactive
         self.verbose = verbose
 
         # Initialize these if they were supplied on the command line
@@ -137,7 +149,7 @@ class Session:
                 case "quit" | "exit":
                     break
                 case "help":
-                    self.cmd_help(args)
+                    Session.cmd_help(args)
                 case "show":
                     self.cmd_show(args)
                 case "list":
@@ -265,7 +277,8 @@ class Session:
         pass
         # TODO: Have MX load the ral file and initialize the system
 
-    def cmd_help(self, args: list[str]) -> None:
+    @staticmethod
+    def cmd_help(args: list[str]) -> None:
         print("Commands:")
         print("  show <item>              - Display item on console (ex: show path)")
         print("  show states              - Display current state of all state models")
@@ -409,6 +422,11 @@ class Session:
         """
         Process each interaction of the scenario until it is complete
         """
+        if self.output_path:
+            from sequins.sd_adapter import SequenceDiagramAdapter
+            self.sd = SequenceDiagramAdapter(output_file=self.output_path, interactive=self.interactive)
+            self.sd.start_diagram(theme=self.sd_theme)
+
         print(f"Running scenario: {self.scenario_name}...\n")
         # Set external events to trigger an announcement and return control after enclosing activity completes
         System.set_announce_triggers(['external signal'])

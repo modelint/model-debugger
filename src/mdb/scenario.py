@@ -12,7 +12,7 @@ class Scenario:
     def __init__(self, sfile: Path):
         """
         Args:
-            file: Path to a scenario yaml file
+            sfile: Path to a scenario yaml file
         """
         # Load the yaml file
         with open(sfile, "r") as file:
