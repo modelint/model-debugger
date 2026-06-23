@@ -3,6 +3,7 @@
 # System
 import shlex
 import sys
+import time
 from pathlib import Path
 import logging
 import re
@@ -13,6 +14,7 @@ from mx.system import System
 from mx.mxtypes import *
 
 # MDB
+from mdb.seq_diagram import SeqDiagramOutput
 from mdb.ui_types import *
 from mdb.scenario import Scenario
 
@@ -63,16 +65,14 @@ class Session:
 
         self.system = None
         self.playground_name = None
-        self.output_path = None
-        self.sd = None
-        self.sd_theme = None
-        self.interactive = False
         self.scenario_name = None
         self.playground_scenarios: list[str] = []
         self.active_scenario = None
         self.verbose = False
         self.stepping = False  # By default we assume that the user wants to run the scenario without stepping
         self.descriptions = False
+        self.sd_out = None
+        self.clock = None
 
     def initialize(self, verbose: bool,
                    interactive: bool,
@@ -107,10 +107,11 @@ class Session:
             print("System not yet initialized. Use: set system <path> to initialize.")
         self.scenario_name = scenario_name
         self.playground_name = playground_name
-        self.output_path = sd_path
-        self.sd_theme = 'default' or sd_theme  # no theme specified, so use 'default'
-        self.interactive = interactive
         self.verbose = verbose
+
+        if sd_path:
+            theme = sd_theme or 'default'
+            self.sd_out = SeqDiagramOutput(session=self, sd_path=sd_path, interactive=interactive, sd_theme=theme)
 
         # Initialize these if they were supplied on the command line
         if playground_name:
@@ -396,52 +397,70 @@ class Session:
             for n, p in enumerate(self.playground_scenarios):
                 print(f"  [{n + 1}] - {p}")
 
-    @staticmethod
-    def format_interaction(i: Interaction):
+    def format_interaction(self, i: Interaction, time: float = 0.0):
         if i.action == ActionType.SIGNAL_INSTANCE:
-            inst_str = '<' + '-'.join([str(v) for v in i.target.instance_id.values()]) + '>'
-            formatted_i = f"{i.source.domain} >|| {i.target.domain} : {i.name} -> {i.target.class_name} {inst_str}"
+            formatted_i = f"{i.source_actor} >|| {i.target.domain} : {i.name} -> {i.target_actor}"
         else:
-            formatted_i = "Unimplemented Acton Type"
+            formatted_i = "Unimplemented Action Type"
         print(formatted_i)
 
-    @staticmethod
-    def format_announcements(announcement_tuples: list[Announcement]):
+        if self.sd_out:
+            self.sd_out.draw_interaction(i, time=time)
+
+    def format_announcements(self, announcement_tuples: list[Announcement]):
         for a in announcement_tuples:
             if isinstance(a, ExternalEvent_Announcement):
                 if a.inst:
                     inst_str = '<' + '-'.join([str(v) for v in a.inst.values()]) + '>'
                 else:
                     inst_str = ""
-                pstrings = [f"{n}={v[0]}" for n,v in a.params.items()]
+                pstrings = [f"{n}={v[0]}" for n, v in a.params.items()]
                 param_str = ', '.join(pstrings)
                 formatted_a = f"{a.domain} >|| {a.ee} : {a.source}{inst_str} {a.event}( {param_str} )"
                 print(f"    {formatted_a}")
+            if isinstance(a, StateEntry_Announcement) and self.sd_out:
+                self.sd_out.draw_state_entry(a)
+                pass
 
     def execute_scenario(self) -> None:
         """
         Process each interaction of the scenario until it is complete
         """
-        if self.output_path:
-            from sequins.sd_adapter import SequenceDiagramAdapter
-            self.sd = SequenceDiagramAdapter(output_file=self.output_path, interactive=self.interactive)
-            self.sd.start_diagram(theme=self.sd_theme)
-
         print(f"Running scenario: {self.scenario_name}...\n")
         # Set external events to trigger an announcement and return control after enclosing activity completes
         System.set_announce_triggers(['external signal'])
 
+        # Enable state entry reporting for all modeled domains
+        for d in self.system.domains.values():
+            d.announce_state_entry = True
+
         interactions = iter(self.active_scenario.interactions)
         i = next(interactions, None)
+
+        if self.sd_out:
+            # Start the sequence diagram
+            self.sd_out.start()
+
+        # Logical scenario time in seconds. Reference t0 = 0 at scenario start; each stimulus
+        # advances the clock by its (unit-normalized) declared delay and is stamped at the
+        # resulting value. Responses fall out of model execution at the current instant, so
+        # they do not advance the clock. The depth handed to Sequins is this declared value,
+        # not a measured wall-clock elapsed time, so the diagram is deterministic and crisp.
+        self.clock = 0.0
 
         while i is not None:
             if self.descriptions:
                 print(f"    ** {i.description} ** ")
             # Process the current interaction
             if i.direction == Direction.STIMULUS:
-                Session.format_interaction(i)  # Print out the stimulus injection info
+                self.clock += i.delay  # wait time before this stimulus, relative to the prior one
+                # Optional cosmetic hold so an interactively-rendered diagram unfolds at
+                # scenario pace. Purely presentational -- it never affects the stamped depth.
+                if self.sd_out and self.sd_out.interactive and not self.stepping and i.delay > 0:
+                    time.sleep(i.delay)
+                self.format_interaction(i, time=self.clock)  # Print out the stimulus injection info
                 self.system.inject(stimulus=i)  # Inject the stimulus, transferring control to MX
-                self.format_announcements(self.system.announcements)  # Print out any triggered announcments
+                self.format_announcements(self.system.announcements)  # Print out any triggered announcements
 
                 # TODO: Think about how to correlate announcements and responses
                 # The triggered announcments should correspond to the expedted response interactions
