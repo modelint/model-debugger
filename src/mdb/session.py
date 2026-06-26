@@ -12,11 +12,13 @@ import yaml
 # Model Integration
 from mx.system import System
 from mx.mxtypes import *
+from mx.system import StateMachineType
 
 # MDB
-from mdb.seq_diagram import SeqDiagramOutput
-from mdb.ui_types import *
 from mdb.scenario import Scenario
+from mdb.system_output import SystemOutput
+from mdb.ui_types import *
+from mdb.exceptions import *
 
 STEP_PROMPT = '>: '
 
@@ -71,8 +73,8 @@ class Session:
         self.verbose = False
         self.stepping = False  # By default we assume that the user wants to run the scenario without stepping
         self.descriptions = False
-        self.sd_out = None
         self.clock = None
+        self.sys_out = None
 
     def initialize(self, verbose: bool,
                    interactive: bool,
@@ -108,10 +110,7 @@ class Session:
         self.scenario_name = scenario_name
         self.playground_name = playground_name
         self.verbose = verbose
-
-        if sd_path:
-            theme = sd_theme or 'default'
-            self.sd_out = SeqDiagramOutput(session=self, sd_path=sd_path, interactive=interactive, sd_theme=theme)
+        self.sys_out = SystemOutput(session=self, sd_path=sd_path, interactive=interactive, sd_theme=sd_theme)
 
         # Initialize these if they were supplied on the command line
         if playground_name:
@@ -397,49 +396,14 @@ class Session:
             for n, p in enumerate(self.playground_scenarios):
                 print(f"  [{n + 1}] - {p}")
 
-    def format_interaction(self, i: Interaction, time: float = 0.0):
-        if i.action == ActionType.SIGNAL_INSTANCE:
-            formatted_i = f"{i.source_actor} >|| {i.target.domain} : {i.name} -> {i.target_actor}"
-        else:
-            formatted_i = "Unimplemented Action Type"
-        print(formatted_i)
-
-        if self.sd_out:
-            self.sd_out.draw_interaction(i, time=time)
-
-    def format_announcements(self, announcement_tuples: list[Announcement]):
-        for a in announcement_tuples:
-            if isinstance(a, ExternalEvent_Announcement):
-                if a.inst:
-                    inst_str = '<' + '-'.join([str(v) for v in a.inst.values()]) + '>'
-                else:
-                    inst_str = ""
-                pstrings = [f"{n}={v[0]}" for n, v in a.params.items()]
-                param_str = ', '.join(pstrings)
-                formatted_a = f"{a.domain} >|| {a.ee} : {a.source}{inst_str} {a.event}( {param_str} )"
-                print(f"    {formatted_a}")
-            if isinstance(a, StateEntry_Announcement) and self.sd_out:
-                self.sd_out.draw_state_entry(a)
-                pass
-
     def execute_scenario(self) -> None:
         """
         Process each interaction of the scenario until it is complete
         """
         print(f"Running scenario: {self.scenario_name}...\n")
-        # Set external events to trigger an announcement and return control after enclosing activity completes
-        System.set_announce_triggers(['external signal'])
-
-        # Enable state entry reporting for all modeled domains
-        for d in self.system.domains.values():
-            d.announce_state_entry = True
 
         interactions = iter(self.active_scenario.interactions)
         i = next(interactions, None)
-
-        if self.sd_out:
-            # Start the sequence diagram
-            self.sd_out.start()
 
         # Logical scenario time in seconds. Reference t0 = 0 at scenario start; each stimulus
         # advances the clock by its (unit-normalized) declared delay and is stamped at the
@@ -456,11 +420,12 @@ class Session:
                 self.clock += i.delay  # wait time before this stimulus, relative to the prior one
                 # Optional cosmetic hold so an interactively-rendered diagram unfolds at
                 # scenario pace. Purely presentational -- it never affects the stamped depth.
-                if self.sd_out and self.sd_out.interactive and not self.stepping and i.delay > 0:
+                if self.sys_out.diagram and self.sys_out.diagram.interactive and not self.stepping and i.delay > 0:
                     time.sleep(i.delay)
-                self.format_interaction(i, time=self.clock)  # Print out the stimulus injection info
+
                 self.system.inject(stimulus=i)  # Inject the stimulus, transferring control to MX
-                self.format_announcements(self.system.announcements)  # Print out any triggered announcements
+                self.sys_out.process(self.system.announcements)  # Print out any triggered announcements
+                pass
 
                 # TODO: Think about how to correlate announcements and responses
                 # The triggered announcments should correspond to the expedted response interactions
@@ -468,7 +433,7 @@ class Session:
                 # package, but we keep them in the scenario yaml for now.
             else:  # Response
                 self.system.go()  # No stimulus to inject, so just pass control back to MX
-                self.format_announcements(self.system.announcements)  # Print out any triggered announcments
+                self.text_out.format_announcements(self.system.announcements)  # Print out any triggered announcments
 
             if not self.stepping:
                 i = next(interactions, None)

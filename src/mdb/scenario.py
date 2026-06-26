@@ -3,9 +3,12 @@
 # System
 from pathlib import Path
 import yaml
+from mx.exceptions import MXUserDBException
 
 # Model Integration
 from mx.mxtypes import *
+
+from mdb.exceptions import MDBScenarioException
 
 # Multipliers that normalize a declared delay to canonical seconds. The scenario yaml
 # pairs a numeric `delay` with a `time` unit (see CLAUDE.md: <min, s, ms>); we fold the
@@ -28,9 +31,23 @@ class Scenario:
         internal_actor_parse = sdata['Actors']['internal']
         for domain, instances in internal_actor_parse.items():
             for name, address in instances.items():
-                instance_id = {attr: value for attr, value in address['instance'].items()}
-                self.actors[f"{domain}:{name}"] = InstanceAddress(domain=domain, class_name=address['class'],
-                                                             instance_id=instance_id)
+                if sm_name := address.get('class'):
+                    sm_type = StateMachineType.LIFECYCLE
+                elif sm_name := address.get('rnum'):
+                    if address.get('instance'):
+                        sm_type = StateMachineType.MA
+                    else:
+                        sm_type = StateMachineType.SA
+                        instance_id = None
+                else:
+                    msg = f"Cannot determine state machine type for internal actor in: {sfile}"
+                    raise MDBScenarioException(msg)
+                if sm_type != StateMachineType.SA:
+                    instance_id = {attr: value for attr, value in address['instance'].items()}
+                self.actors[f"{domain}:{name}"] = InternalAddress(domain_name=None, domain_alias=domain,
+                                                                  sm_name=sm_name,
+                                                                  sm_type=sm_type,
+                                                                  instance_id=instance_id)
 
         external_actor_parse = sdata['Actors']['external']
         for ea in external_actor_parse:
@@ -61,3 +78,23 @@ class Scenario:
             )
             self.interactions.append(ituple)
         pass
+
+    def lookup_actor(self, sm_name: str, instance_id: dict[str, Any] | None) -> str | None:
+        """
+        Given a state machine name and an instance id, return the corresponding actor name.
+
+        Args:
+            sm_name:  State machine name
+            instance_id:  Executing or partitioning instance, none if this is a single assigner state machine
+
+        Returns:
+            The actor name, None if not found
+        """
+        for actor_name, actor_info in self.actors.items():
+            if instance_id is None and actor_info.sm_name == sm_name:
+                # Single assigners don't have an instance ID, just match on the sm_name
+                return actor_name
+            if actor_info.sm_name == sm_name and actor_info.instance_id == instance_id:
+                return actor_name
+        return None  # Actor not found
+
