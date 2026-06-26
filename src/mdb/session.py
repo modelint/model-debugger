@@ -396,6 +396,11 @@ class Session:
             for n, p in enumerate(self.playground_scenarios):
                 print(f"  [{n + 1}] - {p}")
 
+    def run_thru_announcements(self):
+        while self.system.announcements:
+            self.sys_out.process(announcements=self.system.announcements)
+            self.system.go()
+
     def execute_scenario(self) -> None:
         """
         Process each interaction of the scenario until it is complete
@@ -424,16 +429,11 @@ class Session:
                     time.sleep(i.delay)
 
                 self.system.inject(stimulus=i)  # Inject the stimulus, transferring control to MX
-                self.sys_out.process(self.system.announcements)  # Print out any triggered announcements
-                pass
-
+                self.run_thru_announcements()
                 # TODO: Think about how to correlate announcements and responses
                 # The triggered announcments should correspond to the expedted response interactions
                 # but at this point, we doin't attempt to match them up.  This may be in the realm of a testing
                 # package, but we keep them in the scenario yaml for now.
-            else:  # Response
-                self.system.go()  # No stimulus to inject, so just pass control back to MX
-                self.text_out.format_announcements(self.system.announcements)  # Print out any triggered announcments
 
             if not self.stepping:
                 i = next(interactions, None)

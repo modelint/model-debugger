@@ -42,7 +42,7 @@ class TextFormatter:
                 formatted_a = f"{a.domain} >|| {a.ee} : {a.source}{inst_str} {a.event}( {param_str} )"
                 print(f"{I1}{formatted_a}")
             case 'mx_StateEntry_Announcement':
-                self.diagram.draw_state_entry(a)
+                self.format_state_entry(a)
         pass
     pass
 
