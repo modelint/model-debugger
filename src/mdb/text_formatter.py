@@ -11,8 +11,8 @@ from mx.mxtypes import *
 if TYPE_CHECKING:
     from mdb.session import Session
 
-I1 = ' ' * 4  # Primary indent
-I2 = ' ' * 2  # Secondary indent
+I1 = ' ' * 4  # Indent for a signal / external-event line
+I2 = ' ' * 8  # Indent for a state-entry line (nested under its triggering signal)
 
 class TextFormatter:
 
@@ -24,9 +24,7 @@ class TextFormatter:
             case 'mx_InteractionSignal_Announcement':
                 if isinstance(a.source, ExternalAddress):
                     f_signal = f"{a.source.domain} >|| {a.dest.domain_alias} : {a.event} -> "
-                    f_target = self.session.active_scenario.lookup_actor(
-                        sm_name=a.dest.sm_name, instance_id=a.dest.instance_id)
-                    formatted_a = f_signal + f_target
+                    formatted_a = f_signal + self.format_sm_addr(a.dest)
                     print(f"{I1}{formatted_a}")
                 else:
                     formatted_a = f"{a.source.domain_alias} >|| {a.event} -> "
@@ -69,4 +67,4 @@ class TextFormatter:
 
     def format_state_entry(self, a: Announcement):
         formatted_a = f"{a.sm} {self.format_inst_id(a.inst)} >[{a.state}]"
-        print(f"{I1}{I2}{formatted_a}")
+        print(f"{I2}{formatted_a}")

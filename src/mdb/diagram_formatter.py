@@ -29,6 +29,14 @@ class DiagramFormatter():
         self.interactive = interactive
         self.sd = None
         self.lifelines: set[str] = set()  # Set of actor lifelines that have already been drawn
+
+        # Per-actor micro-depth: the deepest point reached on each actor's lifeline so far
+        # (its latest state bead or the latest signal directed at it). Successive state
+        # entries advance this by a .001 compute-time step so beads on one actor never
+        # collide. This is the diagram's chronological *ordering* coordinate, distinct from
+        # session.clock (real scenario seconds, which only moves on stimulus delays).
+        self.actor_depth: dict[str, float] = {}
+
         self.start()
 
     def start(self):
@@ -41,7 +49,7 @@ class DiagramFormatter():
     def format_announcement(self, a: Announcement):
         match type(a).__name__:
             case 'mx_InteractionSignal_Announcement':
-                self.draw_signal(a=a, time=self.session.clock)
+                self.draw_signal(a=a)
             case 'mx_ExternalEvent_Announcement':
                 pass
             case 'mx_StateEntry_Announcement':
@@ -65,27 +73,27 @@ class DiagramFormatter():
 
     def draw_state_entry(self, announcement: StateEntry_Announcement):
         actor = self.session.active_scenario.lookup_actor(sm_name=announcement.sm, instance_id=announcement.inst)
-        self.sd.state_entered(actor, announcement.state, time=self.session.clock+.001)
+        # Advance this actor's lifeline by one compute-time step below its prior depth (its
+        # last state, or the signal that just triggered this entry -- whichever is deeper).
+        depth = self.actor_depth.get(actor, self.session.clock) + .001
+        self.sd.state_entered(actor, announcement.state, time=depth)
+        self.actor_depth[actor] = depth
 
-        # TODO: We want to keep a clock local to the actor that starts at clock time and
-        # TODO: advances .001 relative to the time of the most recent state or incoming
-        # TODO: signal time directoed to this actor, whichever is the most recent
-
-        pass
-
-    def draw_signal(self, a: InteractionSignal_Announcement, time: float):
-        # `time` is the logical scenario time (seconds) computed by the execution loop; it
-        # becomes the signal's depth on the chronological axis. Sequins only honors an
-        # explicit depth for signals leaving a bare (external) String, which is exactly the
-        # stimulus case routed here -- responses from beaded instance Strings ride their bead.
+    def draw_signal(self, a: InteractionSignal_Announcement):
+        # The signal's depth is its source's current lifeline depth. Sequins only honors an
+        # explicit depth for a signal leaving a bare (external) String; from a beaded
+        # internal String the depth is taken from the source's projecting bead, so the value
+        # we pass is ignored there and merely keeps our bookkeeping consistent.
 
         # Process source of signal
         if isinstance(a.source, ExternalAddress):
             source_actor = a.source.domain
             self.draw_ee_lifeline(actor=source_actor)
+            src_depth = self.session.clock  # external actor has no bead; ride the macro instant
         else:
             source_actor = self.session.active_scenario.lookup_actor(sm_name=a.source.sm_name, instance_id=a.source.instance_id)
             self.draw_inst_lifeline(actor=source_actor)
+            src_depth = self.actor_depth.get(source_actor, self.session.clock)
         # Process target of signal
         if isinstance(a.dest, ExternalAddress):
             target_actor = a.dest.domain
@@ -94,5 +102,8 @@ class DiagramFormatter():
             target_actor = self.session.active_scenario.lookup_actor(sm_name=a.dest.sm_name, instance_id=a.dest.instance_id)
             self.draw_inst_lifeline(actor=target_actor)
 
+        # Raise the destination's floor so its next state bead sits below this arriving signal
+        self.actor_depth[target_actor] = max(self.actor_depth.get(target_actor, self.session.clock), src_depth)
+
         # Draw signal
-        self.sd.signal(source_actor=source_actor, dest_actor=target_actor, name=a.event, time=time)
+        self.sd.signal(source_actor=source_actor, dest_actor=target_actor, name=a.event, time=src_depth)

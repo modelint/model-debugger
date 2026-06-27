@@ -91,6 +91,8 @@ class Scenario:
             The actor name, None if not found
         """
         for actor_name, actor_info in self.actors.items():
+            if isinstance(actor_info, ExternalAddress):
+                continue  # external actors have no state machine to match against
             if instance_id is None and actor_info.sm_name == sm_name:
                 # Single assigners don't have an instance ID, just match on the sm_name
                 return actor_name
