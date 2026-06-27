@@ -32,8 +32,10 @@ class Scenario:
         internal_actor_parse = sdata['Actors']['internal']
         for domain, instances in internal_actor_parse.items():
             # The yaml keys domains by alias (e.g. EVMAN); mx needs the full domain name
-            # (e.g. Elevator Management) to resolve event-signature parameter types.
-            domain_name = system.domains[domain].name if system else None
+            # (e.g. Elevator Management) to resolve event-signature parameter types, and the
+            # class alias (keyletter) map to fill each actor's sm_alias.
+            dom = system.domains[domain] if system else None
+            domain_name = dom.name if dom else None
             for name, address in instances.items():
                 if sm_name := address.get('class'):
                     sm_type = StateMachineType.LIFECYCLE
@@ -48,8 +50,10 @@ class Scenario:
                     raise MDBScenarioException(msg)
                 if sm_type != StateMachineType.SA:
                     instance_id = {attr: value for attr, value in address['instance'].items()}
+                sm_alias = dom.class_aliases.get(sm_name, sm_name) if dom else sm_name
                 self.actors[f"{domain}:{name}"] = InternalAddress(domain_name=domain_name, domain_alias=domain,
                                                                   sm_name=sm_name,
+                                                                  sm_alias=sm_alias,
                                                                   sm_type=sm_type,
                                                                   instance_id=instance_id)
 

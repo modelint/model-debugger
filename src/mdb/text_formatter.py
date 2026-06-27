@@ -31,18 +31,14 @@ class TextFormatter:
                     formatted_a = formatted_a + self.format_sm_addr(a.dest)
                     print(f"{I1}{formatted_a}")
             case 'mx_ExternalEvent_Announcement':
-                if a.inst:
-                    inst_str = '<' + '-'.join([str(v) for v in a.inst.values()]) + '>'
-                else:
-                    inst_str = ""
-                pstrings = [f"{n}={v[0]}" for n, v in a.params.items()]
-                param_str = ', '.join(pstrings)
-                formatted_a = f"{a.domain} >|| {a.ee} : {a.source}{inst_str} {a.event}( {param_str} )"
+                # The emitting instance now travels in a.source (an InternalAddress); display
+                # its alias and instance. The instance has no space before it, per the canonical.
+                inst_str = self.format_inst_id(a.source.instance_id) if a.source.instance_id else ""
+                formatted_a = (f"{a.domain} >|| {a.ee} : {a.source.sm_alias}{inst_str} "
+                               f"{a.event}{self.format_params(a.params)}")
                 print(f"{I1}{formatted_a}")
             case 'mx_StateEntry_Announcement':
                 self.format_state_entry(a)
-        pass
-    pass
 
     def format_interaction(self, i: Interaction, time: float = 0.0):
         if i.action == ActionType.SIGNAL_INSTANCE:
@@ -55,12 +51,13 @@ class TextFormatter:
         return '<' + '-'.join([str(v) for v in i.values()]) + '>'
 
     def format_sm_addr(self, sm_addr: InternalAddress) -> str:
+        # A signal target is displayed by its class alias (keyletter), e.g. ASLEV <3-S1>.
         inst_str = '<' + '-'.join([str(v) for v in sm_addr.instance_id.values()]) + '>'
-        return f"{sm_addr.sm_name} {inst_str}"
+        return f"{sm_addr.sm_alias} {inst_str}"
 
     def format_params(self, params: dict[str, Any]) -> str:
         if not params:
-            return ''
+            return '()'
         pstrings = [f"{n}={v[0]}" for n, v in params.items()]
         param_str = ', '.join(pstrings)
         return f"( {param_str} )"
