@@ -381,7 +381,7 @@ class Session:
         print(f"Selected scenario: {scenario_name}")
 
         sfile = self.system.playground / 'scenarios' / (scenario_name + ".yaml")
-        self.active_scenario = Scenario(sfile)
+        self.active_scenario = Scenario(sfile, system=self.system)
 
     def show_scenarios(self) -> None:
         """

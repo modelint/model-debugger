@@ -64,12 +64,16 @@ class DiagramFormatter():
         if actor not in self.lifelines:
             self.lifelines.add(actor)
 
-            # We need to get the current state of this actor
             actor_info = self.session.active_scenario.actors[actor]
             domain = self.session.system.domains[actor_info.domain_alias]
-            current_state = domain.get_current_state(sm_name=actor_info.sm_name, instance_id=actor_info.instance_id)
-            created_now = actor_info.sm_name in domain.lifecycle_deletion_states
-            self.sd.add_actor(name=actor, initial_state=current_state, born_and_die=created_now)
+            if actor_info.sm_name in domain.lifecycle_deletion_states:
+                # Born-and-die instance: its first state arrives via state_entered after the
+                # creation signal, so it must be introduced without an initial_state.
+                self.sd.add_actor(name=actor, born_and_die=True)
+            else:
+                # Persistent instance: seed the lifeline with its current state.
+                current_state = domain.get_current_state(sm_name=actor_info.sm_name, instance_id=actor_info.instance_id)
+                self.sd.add_actor(name=actor, initial_state=current_state)
 
     def draw_state_entry(self, announcement: StateEntry_Announcement):
         actor = self.session.active_scenario.lookup_actor(sm_name=announcement.sm, instance_id=announcement.inst)

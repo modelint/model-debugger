@@ -17,10 +17,11 @@ _TIME_UNITS = {'min': 60.0, 's': 1.0, 'ms': 0.001}
 
 class Scenario:
 
-    def __init__(self, sfile: Path):
+    def __init__(self, sfile: Path, system=None):
         """
         Args:
             sfile: Path to a scenario yaml file
+            system: The loaded System, used to resolve each domain alias to its full name
         """
         # Load the yaml file
         with open(sfile, "r") as file:
@@ -30,6 +31,9 @@ class Scenario:
         self.actors = {}
         internal_actor_parse = sdata['Actors']['internal']
         for domain, instances in internal_actor_parse.items():
+            # The yaml keys domains by alias (e.g. EVMAN); mx needs the full domain name
+            # (e.g. Elevator Management) to resolve event-signature parameter types.
+            domain_name = system.domains[domain].name if system else None
             for name, address in instances.items():
                 if sm_name := address.get('class'):
                     sm_type = StateMachineType.LIFECYCLE
@@ -44,7 +48,7 @@ class Scenario:
                     raise MDBScenarioException(msg)
                 if sm_type != StateMachineType.SA:
                     instance_id = {attr: value for attr, value in address['instance'].items()}
-                self.actors[f"{domain}:{name}"] = InternalAddress(domain_name=None, domain_alias=domain,
+                self.actors[f"{domain}:{name}"] = InternalAddress(domain_name=domain_name, domain_alias=domain,
                                                                   sm_name=sm_name,
                                                                   sm_type=sm_type,
                                                                   instance_id=instance_id)
