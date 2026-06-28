@@ -13,6 +13,7 @@ from mx.mxtypes import *
 from sequins.sd_adapter import SequenceDiagramAdapter
 
 # MDB
+from mdb.text_formatter import TextFormatter
 
 _logger = logging.getLogger(__name__)
 
@@ -51,7 +52,7 @@ class DiagramFormatter():
             case 'mx_InteractionSignal_Announcement':
                 self.draw_signal(a=a)
             case 'mx_ExternalEvent_Announcement':
-                pass
+                self.draw_ext_event(a=a)
             case 'mx_StateEntry_Announcement':
                 self.draw_state_entry(a)
 
@@ -95,7 +96,8 @@ class DiagramFormatter():
             self.draw_ee_lifeline(actor=source_actor)
             src_depth = self.session.clock  # external actor has no bead; ride the macro instant
         else:
-            source_actor = self.session.active_scenario.lookup_actor(sm_name=a.source.sm_name, instance_id=a.source.instance_id)
+            source_actor = self.session.active_scenario.lookup_actor(
+                sm_name=a.source.sm_name, instance_id=a.source.instance_id)
             self.draw_inst_lifeline(actor=source_actor)
             src_depth = self.actor_depth.get(source_actor, self.session.clock)
         # Process target of signal
@@ -103,11 +105,43 @@ class DiagramFormatter():
             target_actor = a.dest.domain
             self.draw_ee_lifeline(actor=target_actor)
         else:
-            target_actor = self.session.active_scenario.lookup_actor(sm_name=a.dest.sm_name, instance_id=a.dest.instance_id)
+            target_actor = self.session.active_scenario.lookup_actor(
+                sm_name=a.dest.sm_name, instance_id=a.dest.instance_id)
             self.draw_inst_lifeline(actor=target_actor)
 
         # Raise the destination's floor so its next state bead sits below this arriving signal
         self.actor_depth[target_actor] = max(self.actor_depth.get(target_actor, self.session.clock), src_depth)
 
+        # Add any parameters to the event string
+        event_params = a.event
+        if a.params:
+            event_params = event_params + TextFormatter.format_params(a.params)
+
         # Draw signal
-        self.sd.signal(source_actor=source_actor, dest_actor=target_actor, name=a.event, time=src_depth)
+        self.sd.signal(source_actor=source_actor, dest_actor=target_actor, name=event_params, time=src_depth)
+
+    def draw_ext_event(self, a: ExternalEvent_Announcement):
+        """
+        An external event is emitted from some state activity in a state machine actor directed to an external
+        entity actor. It's time of emission matches that of the state activity.
+
+        Args:
+            a: An external event announcement produced by the mx
+        """
+
+        # Source must be an internal state machine actor
+        source_actor = self.session.active_scenario.lookup_actor(
+            sm_name=a.source.sm_name, instance_id=a.source.instance_id)
+        self.draw_inst_lifeline(actor=source_actor)
+        src_depth = self.actor_depth.get(source_actor, self.session.clock)
+
+        # Target of signal must be an external entity actor
+        self.draw_ee_lifeline(actor=a.ee)
+
+        # Add any parameters to the event string
+        event_params = a.event
+        if a.params:
+            event_params = event_params + TextFormatter.format_params(a.params)
+
+        # Draw signal
+        self.sd.signal(source_actor=source_actor, dest_actor=a.ee, name=event_params, time=src_depth)
