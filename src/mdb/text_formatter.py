@@ -34,8 +34,9 @@ class TextFormatter:
                 # The emitting instance now travels in a.source (an InternalAddress); display
                 # its alias and instance. The instance has no space before it, per the canonical.
                 inst_str = TextFormatter.format_inst_id(a.source.instance_id) if a.source.instance_id else ""
+                implicit = '*' if a.implicit else ''
                 formatted_a = (f"{a.domain} >|| {a.ee} : {a.source.sm_alias}{inst_str} "
-                               f"{a.event}{TextFormatter.format_params(a.params)}")
+                               f"{a.event}{TextFormatter.format_params(a.params)}{implicit}")
                 print(f"{I1}{formatted_a}")
             case 'mx_StateEntry_Announcement':
                 TextFormatter.format_state_entry(a)

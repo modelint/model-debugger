@@ -146,4 +146,7 @@ class DiagramFormatter():
             event_params = event_params + TextFormatter.format_params(a.params)
 
         # Draw signal
-        self.sd.signal(source_actor=source_actor, dest_actor=a.ee, name=event_params, time=src_depth)
+        if a.implicit:
+            self.sd.implicit_event(source_actor=source_actor, dest_actor=a.ee, name=event_params, time=src_depth)
+        else:
+            self.sd.signal(source_actor=source_actor, dest_actor=a.ee, name=event_params, time=src_depth)
