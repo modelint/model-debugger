@@ -118,7 +118,9 @@ class DiagramFormatter():
             event_params = event_params + TextFormatter.format_params(a.params)
 
         # Draw signal
-        self.sd.signal(source_actor=source_actor, dest_actor=target_actor, name=event_params, time=src_depth)
+        if source_actor != target_actor:
+            # The condition above excludes any delayed events which are self directed by nature
+            self.sd.signal(source_actor=source_actor, dest_actor=target_actor, name=event_params, time=src_depth)
 
     def draw_ext_event(self, a: ExternalEvent_Announcement):
         """

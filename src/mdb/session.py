@@ -470,4 +470,10 @@ class Session:
                     case _:
                         print(f"Unknown step command: '{raw}'. Type 'h' for help.")
 
+        # Render the final diagram. In interactive mode each verb already wrote a frame, but
+        # non-interactive mode defers all rendering to end_diagram(), so this is what actually
+        # produces the file there.
+        if self.sys_out.diagram:
+            self.sys_out.diagram.end()
+
         print("\nScenario complete.")
