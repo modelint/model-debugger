@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xl="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" version="1.1" viewBox="-636.5874 -137.0961 707.1709 711" width="707.1709" height="711">
+  <defs>
+    <marker orient="auto" overflow="visible" markerUnits="strokeWidth" id="SharpArrow_Marker" stroke-linejoin="miter" stroke-miterlimit="10" viewBox="-6 -4 10 8" markerWidth="10" markerHeight="8" color="white">
+      <g>
+        <path d="M -5 0 L 3 3 L 0 0 L 0 0 L 3 -3 Z" fill="currentColor" stroke="currentColor" stroke-width="1"/>
+      </g>
+    </marker>
+  </defs>
+  <g id="blueprint" fill="none" stroke="none" stroke-opacity="1" stroke-dasharray="none" fill-opacity="1">
+    <title>blueprint</title>
+    <g id="blueprint_Blue_Frame">
+      <title>Blue Frame</title>
+      <g id="Graphic_24">
+        <path d="M -628.5874 -137.0961 L 62.58352 -137.0961 C 67.001796 -137.0961 70.58352 -133.51438 70.58352 -129.0961 L 70.58352 565.9039 C 70.58352 570.3222 67.001796 573.9039 62.58352 573.9039 L -628.5874 573.9039 C -633.00566 573.9039 -636.5874 570.3222 -636.5874 565.9039 L -636.5874 -129.0961 C -636.5874 -133.51438 -633.00566 -137.0961 -628.5874 -137.0961 Z" fill="#004d80"/>
+      </g>
+    </g>
+    <g id="blueprint_Flow">
+      <title>Flow</title>
+      <g id="Group_304">
+        <g id="Graphic_290">
+          <path d="M -526.0858 345.00797 L -517.7108 345.00797 L -510.3358 345.00797 C -507.2292 345.00797 -504.7108 341.72606 -504.7108 337.6776 C -504.7108 333.62917 -507.2292 330.34726 -510.3358 330.34726 L -517.7108 330.34726 L -526.0858 330.34726 L -536.7108 330.34726 C -538.91996 330.34726 -540.7108 332.68106 -540.7108 335.55996 L -540.7108 339.79527 C -540.7108 342.67417 -538.91996 345.00797 -536.7108 345.00797 Z M -526.0858 330.34726 Z" fill="#539455"/>
+          <path d="M -526.0858 345.00797 L -517.7108 345.00797 L -510.3358 345.00797 C -507.2292 345.00797 -504.7108 341.72606 -504.7108 337.6776 C -504.7108 333.62917 -507.2292 330.34726 -510.3358 330.34726 L -517.7108 330.34726 L -526.0858 330.34726 L -536.7108 330.34726 C -538.91996 330.34726 -540.7108 332.68106 -540.7108 335.55996 L -540.7108 339.79527 C -540.7108 342.67417 -538.91996 345.00797 -536.7108 345.00797 Z M -526.0858 330.34726 Z" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+        </g>
+        <g id="Graphic_289">
+          <path d="M -540.7108 343.60995 L -540.7108 356.46834 L -540.7108 368.6357 C -540.7108 370.842 -537.66466 372.63054 -533.907 372.63054 L -468.7351 372.63054 C -464.97747 372.63054 -461.9313 370.842 -461.9313 368.6357 L -461.9313 343.60995 C -461.9313 341.40366 -464.97747 339.6151 -468.7351 339.6151 L -501.895 339.6151 L -533.907 339.6151 L -540.7108 339.6151 Z" fill="#539455"/>
+          <path d="M -540.7108 343.60995 L -540.7108 356.46834 L -540.7108 368.6357 C -540.7108 370.842 -537.66466 372.63054 -533.907 372.63054 L -468.7351 372.63054 C -464.97747 372.63054 -461.9313 370.842 -461.9313 368.6357 L -461.9313 343.60995 C -461.9313 341.40366 -464.97747 339.6151 -468.7351 339.6151 L -501.895 339.6151 L -533.907 339.6151 L -540.7108 339.6151 Z" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+          <text transform="translate(-535.7108 348.95483)" fill="white">
+            <tspan font-family="Helvetica Neue" font-size="12" fill="white" x="1.269759" y="11" xml:space="preserve">playgrounds</tspan>
+          </text>
+        </g>
+      </g>
+      <g id="Graphic_209">
+        <path d="M -494.46847 71.00112 L -377.71847 71.00112 C -373.3002 71.00112 -369.71847 74.58284 -369.71847 79.00112 L -369.71847 136.83511 C -369.71847 141.25339 -373.3002 144.83511 -377.71847 144.83511 L -494.46847 144.83511 C -498.88674 144.83511 -502.46847 141.25339 -502.46847 136.83511 L -502.46847 79.00112 C -502.46847 74.58284 -498.88674 71.00112 -494.46847 71.00112 Z" fill="#0432ff" fill-opacity=".248323"/>
+        <path d="M -494.46847 71.00112 L -377.71847 71.00112 C -373.3002 71.00112 -369.71847 74.58284 -369.71847 79.00112 L -369.71847 136.83511 C -369.71847 141.25339 -373.3002 144.83511 -377.71847 144.83511 L -494.46847 144.83511 C -498.88674 144.83511 -502.46847 141.25339 -502.46847 136.83511 L -502.46847 79.00112 C -502.46847 74.58284 -498.88674 71.00112 -494.46847 71.00112 Z" stroke="#0096ff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+      </g>
+      <g id="Graphic_194">
+        <text transform="translate(-591.47816 185.65605)" fill="white">
+          <tspan font-family="Verdana" font-weight="bold" font-size="12" fill="white" x="2.0507812" y="12" xml:space="preserve">System execution directory </tspan>
+        </text>
+      </g>
+      <g id="Graphic_203"/>
+      <g id="Graphic_204">
+        <text transform="translate(-595.1239 -114.09344)" fill="#fffc00">
+          <tspan font-family="Verdana" font-weight="bold" font-size="12" fill="#fffc00" x="0" y="12" xml:space="preserve">Model Debugger</tspan>
+        </text>
+      </g>
+      <g id="Graphic_208">
+        <rect x="-426.756" y="79.06158" width="43.163154" height="56.88389" id="path"/>
+        <clipPath id="clip_path">
+          <use xl:href="#path"/>
+        </clipPath>
+        <g clip-path="url(#clip_path)">
+          <image xl:href="image13.png" width="797.28" height="1050.72" transform="translate(-426.756 79.06158) scale(.05413801)"/>
+        </g>
+      </g>
+      <g id="Graphic_207">
+        <text transform="translate(-475.3446 102.20288)" fill="#fffc00">
+          <tspan font-family="Verdana" font-size="12" fill="#fffc00" x="0" y="12" xml:space="preserve">mx</tspan>
+        </text>
+      </g>
+      <g id="Graphic_250">
+        <rect x="-533.12724" y="-26.661413" width="30.360585" height="56.43109" id="path_2"/>
+        <clipPath id="clip_path_2">
+          <use xl:href="#path_2"/>
+        </clipPath>
+        <g clip-path="url(#clip_path_2)">
+          <image xl:href="image16.png" width="26.496" height="49.248" transform="translate(-533.12724 -26.661413) scale(1.1458554)"/>
+        </g>
+      </g>
+      <g id="Graphic_251">
+        <text transform="translate(-239.74767 73.0194)" fill="white">
+          <tspan font-family="Verdana" font-weight="bold" font-size="12" fill="white" x="0" y="12" xml:space="preserve">Execution Log</tspan>
+        </text>
+      </g>
+      <g id="Graphic_252">
+        <text transform="translate(-349.6764 -92.60695)" fill="white">
+          <tspan font-family="Verdana" font-weight="bold" font-size="12" fill="white" x="16.011044" y="12" xml:space="preserve">Sequence </tspan>
+          <tspan font-family="Verdana" font-weight="bold" font-size="12" fill="white" x="19.928036" y="27" xml:space="preserve">Diagram</tspan>
+        </text>
+      </g>
+      <g id="Graphic_253">
+        <rect x="-248.08265" y="-108.38699" width="286.52297" height="150.4678" id="path_3"/>
+        <clipPath id="clip_path_3">
+          <use xl:href="#path_3"/>
+        </clipPath>
+        <g clip-path="url(#clip_path_3)">
+          <image xl:href="image17.png" width="1491" height="783" transform="translate(-248.08265 -108.38699) scale(.19216832)"/>
+        </g>
+      </g>
+      <g id="Graphic_254">
+        <rect x="-128.63057" y="67.213696" width="153.04534" height="175.125" id="path_4"/>
+        <clipPath id="clip_path_4">
+          <use xl:href="#path_4"/>
+        </clipPath>
+        <g clip-path="url(#clip_path_4)">
+          <image xl:href="image18.png" width="506" height="579" transform="translate(-128.63057 67.213696) scale(.30246114)"/>
+        </g>
+      </g>
+      <g id="Graphic_256">
+        <text transform="translate(-294.37594 519.60717)" fill="white">
+          <tspan font-family="Verdana" font-style="italic" font-size="13" fill="white" x="0" y="13" xml:space="preserve">(go from Lobby to 3rd floor)</tspan>
+        </text>
+      </g>
+      <g id="Graphic_260">
+        <path d="M -333.0754 82.27987 L -344.41024 68.2825 L -306.42723 37.524464 L -312.09465 30.525778 L -283.6626 30.6781 L -289.42496 58.52052 L -295.09238 51.521836 Z" fill="#ffff40"/>
+        <path d="M -333.0754 82.27987 L -344.41024 68.2825 L -306.42723 37.524464 L -312.09465 30.525778 L -283.6626 30.6781 L -289.42496 58.52052 L -295.09238 51.521836 Z" stroke="#506fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_261">
+        <path d="M -332.77627 136.92475 L -330.89358 119.01216 L -282.28632 124.12099 L -281.34498 115.1647 L -261.3482 135.37691 L -285.11036 150.98987 L -284.169 142.03358 Z" fill="#ffff40"/>
+        <path d="M -332.77627 136.92475 L -330.89358 119.01216 L -282.28632 124.12099 L -281.34498 115.1647 L -261.3482 135.37691 L -285.11036 150.98987 L -284.169 142.03358 Z" stroke="#506fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_210">
+        <ellipse cx="-437.4492" cy="30.782563" rx="37.8724943668005" ry="35.1852425436018" fill="#0432ff" fill-opacity=".248323"/>
+        <ellipse cx="-437.4492" cy="30.782563" rx="37.8724943668005" ry="35.1852425436018" stroke="#0096ff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+        <text transform="translate(-462.74717 23.282563)" fill="#fffc00">
+          <tspan font-family="Verdana" font-size="12" fill="#fffc00" x="11.985447" y="12" xml:space="preserve">mdb</tspan>
+        </text>
+      </g>
+      <g id="Line_282">
+        <line x1="-377.64558" y1="458.57605" x2="-397.64145" y2="458.57605" marker-start="url(#SharpArrow_Marker)" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_284">
+        <text transform="translate(-369.79573 403.0272)" fill="white">
+          <tspan font-family="Verdana" font-size="13" fill="white" x="0" y="13" xml:space="preserve">Selected playground and scenario</tspan>
+        </text>
+      </g>
+      <g id="Group_303">
+        <g id="Graphic_291">
+          <path d="M -555.82285 229.13525 L -549.9295 229.13525 L -544.7399 229.13525 C -542.55384 229.13525 -540.7817 226.47507 -540.7817 223.19356 C -540.7817 219.91205 -542.55384 217.25186 -544.7399 217.25186 L -549.9295 217.25186 L -555.82285 217.25186 L -563.29945 217.25186 C -564.854 217.25186 -566.1142 219.14355 -566.1142 221.47707 L -566.1142 224.91005 C -566.1142 227.24356 -564.854 229.13525 -563.29945 229.13525 Z M -555.82285 217.25186 Z" fill="#e56fbb"/>
+          <path d="M -555.82285 229.13525 L -549.9295 229.13525 L -544.7399 229.13525 C -542.55384 229.13525 -540.7817 226.47507 -540.7817 223.19356 C -540.7817 219.91205 -542.55384 217.25186 -544.7399 217.25186 L -549.9295 217.25186 L -555.82285 217.25186 L -563.29945 217.25186 C -564.854 217.25186 -566.1142 219.14355 -566.1142 221.47707 L -566.1142 224.91005 C -566.1142 227.24356 -564.854 229.13525 -563.29945 229.13525 Z M -555.82285 217.25186 Z" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+        </g>
+        <g id="Graphic_292">
+          <path d="M -566.1142 229.62738 L -566.1142 245.28132 L -566.1142 260.094 C -566.1142 262.77995 -563.979 264.95735 -561.3451 264.95735 L -515.66366 264.95735 C -513.0298 264.95735 -510.8946 262.77995 -510.8946 260.094 L -510.8946 229.62738 C -510.8946 226.94142 -513.0298 224.76402 -515.66366 224.76402 L -538.9067 224.76402 L -561.3451 224.76402 L -566.1142 224.76402 Z" fill="#e56fbb"/>
+          <path d="M -566.1142 229.62738 L -566.1142 245.28132 L -566.1142 260.094 C -566.1142 262.77995 -563.979 264.95735 -561.3451 264.95735 L -515.66366 264.95735 C -513.0298 264.95735 -510.8946 262.77995 -510.8946 260.094 L -510.8946 229.62738 C -510.8946 226.94142 -513.0298 224.76402 -515.66366 224.76402 L -538.9067 224.76402 L -561.3451 224.76402 L -566.1142 224.76402 Z" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+          <text transform="translate(-561.1142 237.6927)" fill="white">
+            <tspan font-family="Helvetica Neue" font-size="12" fill="white" x="3.3797736" y="11" xml:space="preserve">system</tspan>
+          </text>
+        </g>
+      </g>
+      <g id="Graphic_293">
+        <path d="M -463.0623 498.0788 L -454.6873 498.0788 L -447.3123 498.0788 C -444.2057 498.0788 -441.6873 494.7969 -441.6873 490.74846 C -441.6873 486.7 -444.2057 483.4181 -447.3123 483.4181 L -454.6873 483.4181 L -463.0623 483.4181 L -473.6873 483.4181 C -475.8964 483.4181 -477.6873 485.7519 -477.6873 488.6308 L -477.6873 492.8661 C -477.6873 495.745 -475.8964 498.0788 -473.6873 498.0788 Z M -463.0623 483.4181 Z" fill="#946018"/>
+        <path d="M -463.0623 498.0788 L -454.6873 498.0788 L -447.3123 498.0788 C -444.2057 498.0788 -441.6873 494.7969 -441.6873 490.74846 C -441.6873 486.7 -444.2057 483.4181 -447.3123 483.4181 L -454.6873 483.4181 L -463.0623 483.4181 L -473.6873 483.4181 C -475.8964 483.4181 -477.6873 485.7519 -477.6873 488.6308 L -477.6873 492.8661 C -477.6873 495.745 -475.8964 498.0788 -473.6873 498.0788 Z M -463.0623 483.4181 Z" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+      </g>
+      <g id="Graphic_294">
+        <path d="M -477.6873 495.99746 L -477.6873 506.65636 L -477.6873 516.74243 C -477.6873 518.5713 -475.1725 520.05393 -472.07034 520.05393 L -418.26694 520.05393 C -415.1648 520.05393 -412.65 518.5713 -412.65 516.74243 L -412.65 495.99746 C -412.65 494.16857 -415.1648 492.68596 -418.26694 492.68596 L -445.6425 492.68596 L -472.07034 492.68596 L -477.6873 492.68596 Z" fill="#946018"/>
+        <path d="M -477.6873 495.99746 L -477.6873 506.65636 L -477.6873 516.74243 C -477.6873 518.5713 -475.1725 520.05393 -472.07034 520.05393 L -418.26694 520.05393 C -415.1648 520.05393 -412.65 518.5713 -412.65 516.74243 L -412.65 495.99746 C -412.65 494.16857 -415.1648 492.68596 -418.26694 492.68596 L -445.6425 492.68596 L -472.07034 492.68596 L -477.6873 492.68596 Z" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+        <text transform="translate(-472.6873 499.20195)" fill="white">
+          <tspan font-family="Helvetica Neue" font-size="12" fill="white" x="1.7426462" y="11" xml:space="preserve">scenarios</tspan>
+        </text>
+      </g>
+      <g id="Graphic_295">
+        <path d="M -462.4085 448.65376 L -454.0335 448.65376 L -446.6585 448.65376 C -443.5519 448.65376 -441.0335 445.37185 -441.0335 441.3234 C -441.0335 437.27496 -443.5519 433.99304 -446.6585 433.99304 L -454.0335 433.99304 L -462.4085 433.99304 L -473.0335 433.99304 C -475.24265 433.99304 -477.0335 436.32685 -477.0335 439.20574 L -477.0335 443.44106 C -477.0335 446.31995 -475.24265 448.65376 -473.0335 448.65376 Z M -462.4085 433.99304 Z" fill="#22718d"/>
+        <path d="M -462.4085 448.65376 L -454.0335 448.65376 L -446.6585 448.65376 C -443.5519 448.65376 -441.0335 445.37185 -441.0335 441.3234 C -441.0335 437.27496 -443.5519 433.99304 -446.6585 433.99304 L -454.0335 433.99304 L -462.4085 433.99304 L -473.0335 433.99304 C -475.24265 433.99304 -477.0335 436.32685 -477.0335 439.20574 L -477.0335 443.44106 C -477.0335 446.31995 -475.24265 448.65376 -473.0335 448.65376 Z M -462.4085 433.99304 Z" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+      </g>
+      <g id="Graphic_296">
+        <path d="M -477.0335 446.6854 L -477.0335 457.70807 L -477.0335 468.13835 C -477.0335 470.02965 -474.2555 471.56286 -470.8287 471.56286 L -411.39417 471.56286 C -407.96734 471.56286 -405.18935 470.02965 -405.18935 468.13835 L -405.18935 446.6854 C -405.18935 444.7941 -407.96734 443.2609 -411.39417 443.2609 L -441.63486 443.2609 L -470.8287 443.2609 L -477.0335 443.2609 Z" fill="#22718d"/>
+        <path d="M -477.0335 446.6854 L -477.0335 457.70807 L -477.0335 468.13835 C -477.0335 470.02965 -474.2555 471.56286 -470.8287 471.56286 L -411.39417 471.56286 C -407.96734 471.56286 -405.18935 470.02965 -405.18935 468.13835 L -405.18935 446.6854 C -405.18935 444.7941 -407.96734 443.2609 -411.39417 443.2609 L -441.63486 443.2609 L -470.8287 443.2609 L -477.0335 443.2609 Z" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+        <text transform="translate(-472.0335 450.2439)" fill="white">
+          <tspan font-family="Helvetica Neue" font-size="12" fill="white" x="2.470079" y="11" xml:space="preserve">population</tspan>
+        </text>
+      </g>
+      <g id="Graphic_297">
+        <text transform="translate(-492.57545 235.02683)" fill="white">
+          <tspan font-family="Verdana" font-size="13" fill="white" x="0" y="13" xml:space="preserve">elevator</tspan>
+        </text>
+      </g>
+      <g id="Graphic_301">
+        <text transform="translate(-358.0336 451.4409)" fill="white">
+          <tspan font-family="Verdana" font-size="13" fill="white" x="0" y="13" xml:space="preserve">EVMAN_one_shaft.sip</tspan>
+        </text>
+      </g>
+      <g id="Graphic_305">
+        <text transform="translate(-364.35623 497.0179)" fill="white">
+          <tspan font-family="Verdana" font-size="13" fill="white" x="0" y="13" xml:space="preserve">EVMAN_L_to_3_up.yaml</tspan>
+        </text>
+      </g>
+      <g id="Line_306">
+        <path d="M -493.36265 39.669716 C -514.6498 39.2542 -530.39606 40.74263 -540.6015 56.39098 C -551.8797 73.68421 -547.3684 133.83459 -546.61654 163.90977" marker-start="url(#SharpArrow_Marker)" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Group_307">
+        <g id="Graphic_309">
+          <path d="M -502.77244 398.76364 L -495.63844 398.76364 L -489.35626 398.76364 C -486.71 398.76364 -484.56476 395.48173 -484.56476 391.4333 C -484.56476 387.38484 -486.71 384.10293 -489.35626 384.10293 L -495.63844 384.10293 L -502.77244 384.10293 L -511.82304 384.10293 C -513.7048 384.10293 -515.2303 386.43673 -515.2303 389.31562 L -515.2303 393.55094 C -515.2303 396.42984 -513.7048 398.76364 -511.82304 398.76364 Z M -502.77244 384.10293 Z" fill="#539455"/>
+          <path d="M -502.77244 398.76364 L -495.63844 398.76364 L -489.35626 398.76364 C -486.71 398.76364 -484.56476 395.48173 -484.56476 391.4333 C -484.56476 387.38484 -486.71 384.10293 -489.35626 384.10293 L -495.63844 384.10293 L -502.77244 384.10293 L -511.82304 384.10293 C -513.7048 384.10293 -515.2303 386.43673 -515.2303 389.31562 L -515.2303 393.55094 C -515.2303 396.42984 -513.7048 398.76364 -511.82304 398.76364 Z M -502.77244 384.10293 Z" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+        </g>
+        <g id="Graphic_308">
+          <path d="M -515.2303 397.3656 L -515.2303 410.224 L -515.2303 422.39137 C -515.2303 424.59766 -510.229 426.3862 -504.05957 426.3862 L -397.05764 426.3862 C -390.8882 426.3862 -385.8869 424.59766 -385.8869 422.39137 L -385.8869 397.3656 C -385.8869 395.15933 -390.8882 393.3708 -397.05764 393.3708 L -451.50096 393.3708 L -504.05957 393.3708 L -515.2303 393.3708 Z" fill="#539455"/>
+          <path d="M -515.2303 397.3656 L -515.2303 410.224 L -515.2303 422.39137 C -515.2303 424.59766 -510.229 426.3862 -504.05957 426.3862 L -397.05764 426.3862 C -390.8882 426.3862 -385.8869 424.59766 -385.8869 422.39137 L -385.8869 397.3656 C -385.8869 395.15933 -390.8882 393.3708 -397.05764 393.3708 L -451.50096 393.3708 L -504.05957 393.3708 L -515.2303 393.3708 Z" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+          <text transform="translate(-510.2303 402.7105)" fill="white">
+            <tspan font-family="Helvetica Neue" font-size="12" fill="white" x="4.213715" y="11" xml:space="preserve">one_bank_one_shaft</tspan>
+          </text>
+        </g>
+      </g>
+      <g id="Graphic_310">
+        <text transform="translate(-199.1669 451.6588)" fill="white">
+          <tspan font-family="Verdana" font-style="italic" font-size="13" fill="white" x="0" y="13" xml:space="preserve">(instances, initial states)</tspan>
+        </text>
+      </g>
+      <g id="Line_311">
+        <line x1="-383.7183" y1="505.2185" x2="-403.7142" y2="505.2185" marker-start="url(#SharpArrow_Marker)" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_312">
+        <text transform="translate(-446.40163 347.3397)" fill="white">
+          <tspan font-family="Verdana" font-style="italic" font-size="13" fill="white" x="0" y="13" xml:space="preserve">(a population and its suported scenarios for each)</tspan>
+        </text>
+      </g>
+      <g id="Graphic_313">
+        <text transform="translate(-583.8213 -84.81803)" fill="white">
+          <tspan font-family="Verdana" font-size="13" fill="white" x="0" y="13" xml:space="preserve">user interacts with </tspan>
+          <tspan font-family="Verdana" font-size="13" fill="white" x="0" y="29" xml:space="preserve">mdb to run and debug </tspan>
+          <tspan font-family="Verdana" font-size="13" fill="white" x="0" y="45" xml:space="preserve">scenarios in mx</tspan>
+        </text>
+      </g>
+      <g id="Group_315">
+        <g id="Graphic_317">
+          <path d="M -526.90856 288.2024 L -518.53356 288.2024 L -511.15856 288.2024 C -508.05196 288.2024 -505.53356 284.92047 -505.53356 280.87203 C -505.53356 276.82358 -508.05196 273.54167 -511.15856 273.54167 L -518.53356 273.54167 L -526.90856 273.54167 L -537.53356 273.54167 C -539.7427 273.54167 -541.53356 275.87547 -541.53356 278.75437 L -541.53356 282.9897 C -541.53356 285.86858 -539.7427 288.2024 -537.53356 288.2024 Z M -526.90856 273.54167 Z" fill="#539455"/>
+          <path d="M -526.90856 288.2024 L -518.53356 288.2024 L -511.15856 288.2024 C -508.05196 288.2024 -505.53356 284.92047 -505.53356 280.87203 C -505.53356 276.82358 -508.05196 273.54167 -511.15856 273.54167 L -518.53356 273.54167 L -526.90856 273.54167 L -537.53356 273.54167 C -539.7427 273.54167 -541.53356 275.87547 -541.53356 278.75437 L -541.53356 282.9897 C -541.53356 285.86858 -539.7427 288.2024 -537.53356 288.2024 Z M -526.90856 273.54167 Z" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+        </g>
+        <g id="Graphic_316">
+          <path d="M -541.53356 286.80437 L -541.53356 299.66275 L -541.53356 311.8301 C -541.53356 314.0364 -538.4874 315.82495 -534.72976 315.82495 L -469.55784 315.82495 C -465.8002 315.82495 -462.75404 314.0364 -462.75404 311.8301 L -462.75404 286.80437 C -462.75404 284.59808 -465.8002 282.80953 -469.55784 282.80953 L -502.71776 282.80953 L -534.72976 282.80953 L -541.53356 282.80953 Z" fill="#539455"/>
+          <path d="M -541.53356 286.80437 L -541.53356 299.66275 L -541.53356 311.8301 C -541.53356 314.0364 -538.4874 315.82495 -534.72976 315.82495 L -469.55784 315.82495 C -465.8002 315.82495 -462.75404 314.0364 -462.75404 311.8301 L -462.75404 286.80437 C -462.75404 284.59808 -465.8002 282.80953 -469.55784 282.80953 L -502.71776 282.80953 L -534.72976 282.80953 L -541.53356 282.80953 Z" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+          <text transform="translate(-536.53356 292.14924)" fill="white">
+            <tspan font-family="Helvetica Neue" font-size="12" fill="white" x="14.715759" y="11" xml:space="preserve">models</tspan>
+          </text>
+        </g>
+      </g>
+      <g id="Graphic_318">
+        <text transform="translate(-414.99945 290.04176)" fill="white">
+          <tspan font-family="Verdana" font-size="13" fill="white" x="0" y="13" xml:space="preserve">mmdb_elevator.ral</tspan>
+        </text>
+      </g>
+      <g id="Graphic_319">
+        <rect x="-447.89925" y="282.86767" width="30.945005" height="30.945005" id="path_5"/>
+        <clipPath id="clip_path_5">
+          <use xl:href="#path_5"/>
+        </clipPath>
+        <g clip-path="url(#clip_path_5)">
+          <image xl:href="image3.png" width="86.4" height="86.4" transform="translate(-447.89925 282.86767) scale(.3581598)"/>
+        </g>
+      </g>
+      <g id="Graphic_322">
+        <text transform="translate(-280.07728 289.72423)" fill="white">
+          <tspan font-family="Verdana" font-style="italic" font-size="13" fill="white" x="0" y="13" xml:space="preserve">(generated from xuml text files)</tspan>
+        </text>
+      </g>
+    </g>
+  </g>
+</svg>

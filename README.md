@@ -1,5 +1,11 @@
 # Blueprint Model Debugger
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/modelint/model-debugger/main/docs/images/mdb.png"
+       alt="How MDB works: a user drives mdb to run and debug scenarios against the MX execution engine, producing a sequence diagram and execution log from a system execution directory."
+       width="720">
+</p>
+
 An interactive debugger for Shlaer-Mellor Executable UML models. MDB drives the
 [MX model execution engine](https://github.com/modelint/model-execution) through
 user-defined scenarios, letting you step through model level interactions and
