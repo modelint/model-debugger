@@ -4,12 +4,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Running the debugger
 
-Activate the project virtualenv first (`/Users/starr/SDEV/Environments/ModelDebugger`), then:
+Activate the project virtualenv first (`/Users/starr/SDEV/Environments/ModelDebugger313`, Python 3.13), then:
 
 ```bash
-python3.14 -m mdb                                      # interactive mode
-python3.14 -m mdb -s <system_path> -p <playground> -x <scenario>
-python3.14 -m mdb -L   # keep mdb.log after exit (default: auto-deleted)
+python3.13 -m mdb                                      # interactive mode
+python3.13 -m mdb -s <system_path> -p <playground> -x <scenario>
+python3.13 -m mdb -L   # keep mdb.log after exit (default: auto-deleted)
 ```
 
 All three path arguments are optional at launch; they can be set interactively with `set` commands.

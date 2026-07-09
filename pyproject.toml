@@ -15,8 +15,8 @@ classifiers = [
     "Programming Language :: Python :: 3",
 ]
 keywords = ["shlaer-mellor", "metamodel", "executable uml", "mbse", "xuml", "xtuml", "model debugger", "platform independent"]
-dependencies = ["mi-mx", "mi-pyral", "PyYAML"]
-requires-python = ">=3.11"
+dependencies = ["mi-mx", "mi-pyral", "mi-sequins", "PyYAML"]
+requires-python = ">=3.13,<3.14"
 
 [project.optional-dependencies]
 build = ["build", "twine"]
