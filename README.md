@@ -43,14 +43,23 @@ The system directory contains all artifacts needed to load and run a modeled sys
 ```
 <system>/
     models/
-        mmdb_<domain>.ral        - Populated SM metamodels, one per domain 
+        mmdb_<system>.ral        - Populated metamodel for the whole system (all modeled
+                                   domains), built by the xuml_populate `popsystem` command
+        <Domain>_types.yaml      - Maps a domain's data types to platform (TclRAL) types;
+                                   one per modeled domain
     playgrounds/                 - A playground is like a sandbox, as many as you like
         <playground_name>/       - Define one or more scenarios and one initial population
             scenarios/
                 <scenario>.yaml  - The scenario name specified as a yaml file
             population/
-                <domain>.ral     - A modeled domain populated with initial instances
+                <name>.sip       - Source spec for the initial instance population
+                                   (instances, attribute values, initial states)
+                <Domain>.ral     - A modeled domain populated with initial instances
 ```
+
+MDB only needs the path to the system directory. It locates `models/` from there and hands
+off to the MX engine, which reads the populated `.ral` metamodel and the per-domain type
+mappings when it loads the system — MDB does not consume those files directly.
 
 A **playground** is a named initial context — a population of instances in known states
 from which scenarios are launched. Multiple playgrounds can be defined for the same system,

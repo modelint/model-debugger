@@ -53,10 +53,12 @@ The `--system` path points to a directory with this structure:
 
 ```
 <system>/
-  models/          # exactly one *.ral TclRAL metamodel database file
+  models/          # one *.ral TclRAL metamodel DB for the whole system (xuml_populate popsystem)
+                   # + one <Domain>_types.yaml per modeled domain (data type -> TclRAL type map)
   playgrounds/
     <pg_name>/
       scenarios/   # *.yaml scenario files
+      population/  # <name>.sip source population spec + compiled <Domain>.ral
 ```
 
 ## Scenario YAML format
